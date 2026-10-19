@@ -62,27 +62,43 @@ class LexicalRetriever:
             return []
 
         scored_chunks: list[tuple[Chunk, float]] = []
+        normalized_query = re.sub(r"\s+", " ", query.lower().strip("?,.:;\"'()[]"))
+        is_title_or_meta_query = any(w in query_terms for w in ["title", "author", "authors", "paper", "name", "study"])
 
         for chunk, doc in rows:
             chunk_terms = self._tokenize(chunk.text)
             if not chunk_terms:
                 continue
 
-            chunk_term_counts = {}
+            chunk_term_counts: dict[str, int] = {}
             for t in chunk_terms:
                 chunk_term_counts[t] = chunk_term_counts.get(t, 0) + 1
 
-            # Simple TF-based lexical match score with phrase bonus
+            # Simple TF-based lexical match score with prefix/stem support
             score = 0.0
             for term in query_terms:
                 if term in chunk_term_counts:
-                    # Term frequency score with saturation
                     tf = chunk_term_counts[term]
                     score += tf / (tf + 1.2)
+                else:
+                    # Prefix / stem match (e.g. author in authorship, trace in traceability)
+                    for ct, count in chunk_term_counts.items():
+                        if len(term) >= 4 and len(ct) >= 4 and (ct.startswith(term[:4]) or term.startswith(ct[:4])):
+                            score += 0.5 * (count / (count + 1.2))
+                            break
 
-            # Bonus for exact query phrase match
-            if query.lower() in chunk.text.lower():
-                score += 2.0
+            # Bonus for exact query phrase match with normalized whitespace
+            normalized_chunk = re.sub(r"\s+", " ", chunk.text.lower())
+            if normalized_query and len(normalized_query) > 5 and normalized_query in normalized_chunk:
+                score += 3.0
+
+            # Match against document filename
+            if doc.filename and any(term in doc.filename.lower() for term in query_terms):
+                score += 1.0
+
+            # Title & author header boost for page 1 initial chunk
+            if is_title_or_meta_query and chunk.chunk_index == 0 and (not chunk.page_numbers or 1 in chunk.page_numbers):
+                score += 1.5
 
             if score > 0.0:
                 chunk.document = doc

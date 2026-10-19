@@ -21,8 +21,12 @@ class CitationValidator:
         warnings: list[str] = list(raw_response.get("warnings", []))
         insufficient_evidence = bool(raw_response.get("insufficient_evidence", False))
 
-        # Index retrieved chunks by their ID and document ID
+        # Index retrieved chunks by their ID, citation tag (e.g. cite:1), and index
         valid_chunk_map: dict[str, Chunk] = {c.id: c for c in retrieved_chunks}
+        for idx, c in enumerate(retrieved_chunks):
+            valid_chunk_map[f"cite:{idx+1}"] = c
+            valid_chunk_map[f"cite:{idx+1}".lower()] = c
+            valid_chunk_map[str(idx + 1)] = c
 
         raw_citations = raw_response.get("citations", [])
         raw_claims = raw_response.get("claims", [])
@@ -36,13 +40,15 @@ class CitationValidator:
             claimed_pages = rc.get("page_numbers", [])
             excerpt = rc.get("excerpt", "")
 
-            # Check if any claimed chunk ID matches an actual retrieved chunk
+            # Check if claimed chunk ID matches an actual retrieved chunk or cite handle
             matched_chunks = [valid_chunk_map[cid] for cid in claimed_chunk_ids if cid in valid_chunk_map]
 
             if not matched_chunks:
                 if claimed_chunk_ids:
                     warnings.append(f"Rejected hallucinated citation '{c_id}' with invalid chunk IDs: {claimed_chunk_ids}")
                     continue
+                elif c_id and c_id in valid_chunk_map:
+                    matched_chunks = [valid_chunk_map[c_id]]
                 elif retrieved_chunks:
                     matched_chunks = [retrieved_chunks[0]]
                     warnings.append(f"Citation '{c_id}' lacked chunk ID; associated with top retrieved evidence.")

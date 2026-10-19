@@ -1,6 +1,7 @@
 """Google Gemini LLM Service with structured JSON output and test-mode fallback."""
 
 import json
+import re
 import time
 from typing import Any
 
@@ -85,6 +86,13 @@ class GeminiService:
         # 2. Deterministic evidence synthesizer (used in local tests or when API key is pending)
         return self._deterministic_synthesizer(question, retrieved_metadata, start_time)
 
+    @staticmethod
+    def _normalize_stem(word: str) -> str:
+        for suffix in ("ability", "ibility", "ship", "tion", "tions", "ing", "ies", "es", "ed", "s"):
+            if word.endswith(suffix) and len(word) - len(suffix) >= 3:
+                return word[:-len(suffix)]
+        return word
+
     def _deterministic_synthesizer(
         self,
         question: str,
@@ -104,28 +112,67 @@ class GeminiService:
                 "latency_ms": {"generation": latency},
             }
 
-        # Check if substantive question terms appear in retrieved passages
         stop_words = {
             "what", "is", "the", "for", "and", "in", "of", "a", "an", "to", "on",
             "how", "why", "was", "are", "were", "did", "does", "by", "with", "from",
+            "who", "which", "whose", "when", "where", "can", "could", "should", "would",
+            "about", "this", "that", "these", "those", "have", "had", "has", "do",
+            "been", "being", "into", "than", "then", "there",
         }
+
+        q_lower = question.lower()
         content_words = {
-            w.strip("?,.:;\"'()[]") for w in question.lower().split()
+            w.strip("?,.:;\"'()[]") for w in q_lower.split()
             if len(w) > 2 and w.lower() not in stop_words
         }
+        q_stems = {self._normalize_stem(w) for w in content_words}
 
-        matched_passages = []
+        is_meta_query = any(w in q_lower for w in ["title", "author", "authors", "who", "paper", "name"])
+        norm_q = re.sub(r"\s+", " ", q_lower.strip("?,.:;\"'()[]"))
+
+        scored_passages: list[tuple[dict[str, Any], float]] = []
+
         for m in retrieved_metadata:
             p_text = m["text"].lower()
+            norm_p = re.sub(r"\s+", " ", p_text)
             p_words = {w.strip("?,.:;\"'()[]") for w in p_text.split()}
-            overlap = content_words.intersection(p_words)
-            overlap_ratio = len(overlap) / max(1, len(content_words))
+            p_stems = {self._normalize_stem(w) for w in p_words}
 
-            # Need at least 40% of substantive question terms present in passage
-            if overlap_ratio >= 0.4:
-                matched_passages.append(m)
+            # 1. Exact phrase match
+            if norm_q and len(norm_q) > 6 and norm_q in norm_p:
+                scored_passages.append((m, 10.0))
+                continue
 
-        if not matched_passages:
+            # 2. Substantive content word & stem overlap
+            exact_matches = content_words.intersection(p_words)
+            stem_matches = q_stems.intersection(p_stems)
+            total_matches = len(exact_matches.union(stem_matches))
+            overlap_ratio = total_matches / max(1, len(content_words))
+
+            # 3. Meta-query bonus for page 1 / author / title chunks
+            meta_bonus = 0.0
+            if is_meta_query:
+                if 1 in (m.get("page_numbers") or []):
+                    meta_bonus += 0.3
+                if any(term in p_text for term in ["author", "authorship", "university", "@", "abstract", "title"]):
+                    meta_bonus += 0.4
+
+            combined_score = overlap_ratio + meta_bonus
+
+            # Strict evidence grounding criteria:
+            # - For questions with >= 4 content words: require >= 35% overlap and >= 2 substantive terms
+            # - For concise questions (< 4 content words): require at least 1 term match
+            # - For meta-queries (title/author): require page 1 provenance or explicit meta markers
+            is_valid = (
+                (overlap_ratio >= 0.35 and total_matches >= 2)
+                or (len(content_words) < 4 and total_matches >= 1)
+                or (is_meta_query and (1 in (m.get("page_numbers") or []) or any(term in p_text for term in ["author", "authorship", "abstract"])))
+            )
+
+            if is_valid:
+                scored_passages.append((m, combined_score))
+
+        if not scored_passages:
             return {
                 "answer": "The retrieved passages do not contain sufficient evidence to answer this question accurately.",
                 "claims": [],
@@ -135,9 +182,11 @@ class GeminiService:
                 "latency_ms": {"generation": latency},
             }
 
-        top = matched_passages[0]
+        scored_passages.sort(key=lambda x: x[1], reverse=True)
+        top = scored_passages[0][0]
         cite_id = "cite:1"
-        answer = f"Based on {top['filename']} (page {top['page_numbers'][0] if top['page_numbers'] else 1}): {top['text'][:300]}... [{cite_id}]"
+        page_num = top["page_numbers"][0] if top.get("page_numbers") else 1
+        answer = f"Based on {top['filename']} (page {page_num}): {top['text'][:300]}... [{cite_id}]"
 
         return {
             "answer": answer,

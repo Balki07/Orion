@@ -89,7 +89,7 @@ async def ask_research_question(
         pages_str = ", ".join(str(p) for p in chunk.page_numbers) if chunk.page_numbers else "1"
 
         block = (
-            f'<source_evidence id="{cite_id}" doc_id="{chunk.document_id}" '
+            f'<source_evidence id="{cite_id}" chunk_id="{chunk.id}" doc_id="{chunk.document_id}" '
             f'file="{filename}" pages="{pages_str}">\n'
             f"{chunk.text}\n"
             f"</source_evidence>"
