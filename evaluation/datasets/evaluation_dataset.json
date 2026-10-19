@@ -1,0 +1,512 @@
+[
+  {
+    "id": "eval_001",
+    "category": "methodology",
+    "question": "What is the core architectural difference between the Transformer model and recurrent neural networks (RNNs) for sequence processing?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [1, 2],
+    "expected_keywords": ["recurrence", "parallelization", "sequential", "self-attention"],
+    "reference_answer": "The Transformer relies entirely on an attention mechanism to draw global dependencies between input and output, eschewing recurrent layers and allowing for significantly more parallelization during training compared to sequential RNNs.",
+    "answerable": true
+  },
+  {
+    "id": "eval_002",
+    "category": "methodology",
+    "question": "How is Scaled Dot-Product Attention mathematically computed in the Transformer?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [3, 4],
+    "expected_keywords": ["softmax", "Q", "K", "V", "sqrt(d_k)", "dimension"],
+    "reference_answer": "Attention(Q, K, V) = softmax(Q * K^T / sqrt(d_k)) * V, where queries and keys have dimension d_k and values have dimension d_v.",
+    "answerable": true
+  },
+  {
+    "id": "eval_003",
+    "category": "methodology",
+    "question": "Why does Scaled Dot-Product Attention scale the dot products by 1 / sqrt(d_k)?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [4],
+    "expected_keywords": ["magnitude", "extremely small gradients", "softmax", "variance"],
+    "reference_answer": "For large values of d_k, the dot products grow large in magnitude, pushing the softmax function into regions with extremely small gradients. Scaling by 1/sqrt(d_k) counteracts this effect.",
+    "answerable": true
+  },
+  {
+    "id": "eval_004",
+    "category": "methodology",
+    "question": "How many heads and what dimensionality per head are used in the Transformer base model Multi-Head Attention?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [4, 5],
+    "expected_keywords": ["h = 8", "d_k = 64", "d_v = 64", "d_model = 512"],
+    "reference_answer": "In the base model, h = 8 parallel attention heads are employed. With d_model = 512, d_k = d_v = d_model / h = 64.",
+    "answerable": true
+  },
+  {
+    "id": "eval_005",
+    "category": "methodology",
+    "question": "What function is used for Positional Encoding in the Transformer when no learned embeddings are used?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [5, 6],
+    "expected_keywords": ["sine", "cosine", "frequencies", "wavelengths", "pos", "2i"],
+    "reference_answer": "Sine and cosine functions of different frequencies: PE(pos, 2i) = sin(pos / 10000^(2i/d_model)) and PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model)).",
+    "answerable": true
+  },
+  {
+    "id": "eval_006",
+    "category": "results",
+    "question": "What BLEU score did the Transformer (big) model achieve on the WMT 2014 English-to-German translation task?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7, 8],
+    "expected_keywords": ["28.4", "BLEU", "English-to-German", "state-of-the-art"],
+    "reference_answer": "The Transformer (big) model established a state-of-the-art BLEU score of 28.4 on the WMT 2014 English-to-German translation task.",
+    "answerable": true
+  },
+  {
+    "id": "eval_007",
+    "category": "results",
+    "question": "What was the training cost in FLOPs or GPU days for the Transformer base model compared to previous models on WMT 2014 English-to-French?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [8],
+    "expected_keywords": ["3.5 days", "8 P100 GPUs", "training cost"],
+    "reference_answer": "The base model trained for 100,000 steps or 12 hours on 8 P100 GPUs, and the big model trained for 3.5 days on 8 P100 GPUs, at a fraction of the training cost of competitive models.",
+    "answerable": true
+  },
+  {
+    "id": "eval_008",
+    "category": "datasets",
+    "question": "Which benchmark datasets were used to evaluate machine translation performance in Attention Is All You Need?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7],
+    "expected_keywords": ["WMT 2014 English-to-German", "WMT 2014 English-to-French", "byte-pair encoding"],
+    "reference_answer": "The WMT 2014 English-to-German dataset (4.5 million sentence pairs) and the WMT 2014 English-to-French dataset (36 million sentence pairs).",
+    "answerable": true
+  },
+  {
+    "id": "eval_009",
+    "category": "limitations",
+    "question": "What are the computational complexity limitations of self-attention per layer with respect to sequence length n?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [6],
+    "expected_keywords": ["O(n^2)", "quadratic", "sequence length", "complexity per layer"],
+    "reference_answer": "Self-attention layers have a computational complexity per layer of O(n^2 · d), making it computationally expensive for very long sequences where n is much larger than the representation dimension d.",
+    "answerable": true
+  },
+  {
+    "id": "eval_010",
+    "category": "methodology",
+    "question": "What regularization techniques were applied during Transformer training?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7],
+    "expected_keywords": ["residual dropout", "label smoothing", "P_drop = 0.1", "epsilon_ls = 0.1"],
+    "reference_answer": "Residual dropout (with rate P_drop = 0.1 applied to sums of sub-layer outputs and attention weights) and label smoothing with epsilon_ls = 0.1.",
+    "answerable": true
+  },
+  {
+    "id": "eval_011",
+    "category": "methodology",
+    "question": "What optimizer and learning rate schedule were used for training the Transformer?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7],
+    "expected_keywords": ["Adam", "beta_1 = 0.9", "beta_2 = 0.98", "warmup_steps = 4000"],
+    "reference_answer": "The Adam optimizer with beta_1 = 0.9, beta_2 = 0.98, and epsilon = 10^-9 was used, with learning rate varied according to a formula with warmup_steps = 4000.",
+    "answerable": true
+  },
+  {
+    "id": "eval_012",
+    "category": "single_passage",
+    "question": "What is the inner-layer dimensionality of the position-wise feed-forward networks in the Transformer?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [5],
+    "expected_keywords": ["d_ff = 2048", "feed-forward", "ReLU"],
+    "reference_answer": "The dimensionality of input and output is d_model = 512, and the inner-layer has dimensionality d_ff = 2048.",
+    "answerable": true
+  },
+  {
+    "id": "eval_013",
+    "category": "single_passage",
+    "question": "Why is masking applied in the decoder self-attention sub-layer?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [3],
+    "expected_keywords": ["masking", "subsequent positions", "auto-regressive", "illegal connections"],
+    "reference_answer": "Masking ensures that the predictions for position i can depend only on the known outputs at positions less than i, preserving the auto-regressive property.",
+    "answerable": true
+  },
+  {
+    "id": "eval_014",
+    "category": "abstention",
+    "question": "What is the quantum computing simulation benchmark reported for the Transformer in the paper?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [],
+    "expected_keywords": [],
+    "reference_answer": "Insufficient evidence. The paper 'Attention Is All You Need' does not evaluate or mention quantum computing simulations.",
+    "answerable": false
+  },
+  {
+    "id": "eval_015",
+    "category": "abstention",
+    "question": "What was the accuracy of the Transformer model on the ImageNet-1k visual recognition benchmark?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [],
+    "expected_keywords": [],
+    "reference_answer": "Insufficient evidence. The original Attention Is All You Need paper evaluates machine translation and constituency parsing, not ImageNet classification.",
+    "answerable": false
+  },
+  {
+    "id": "eval_016",
+    "category": "abstention",
+    "question": "What were the GPU memory savings when using FP8 quantization in the original 2017 Transformer paper?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [],
+    "expected_keywords": [],
+    "reference_answer": "Insufficient evidence. The 2017 paper does not discuss or use FP8 quantization.",
+    "answerable": false
+  },
+  {
+    "id": "eval_017",
+    "category": "methodology",
+    "question": "What two pre-training tasks were introduced in the BERT paper?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [3, 4],
+    "expected_keywords": ["Masked LM", "MLM", "Next Sentence Prediction", "NSP"],
+    "reference_answer": "BERT was pre-trained using two novel unsupervised objectives: Masked Language Model (MLM) and Next Sentence Prediction (NSP).",
+    "answerable": true
+  },
+  {
+    "id": "eval_018",
+    "category": "methodology",
+    "question": "In BERT's Masked Language Model, what percentage of tokens are masked and how are they substituted?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [4],
+    "expected_keywords": ["15%", "80%", "10%", "[MASK]", "random token"],
+    "reference_answer": "15% of all WordPiece tokens are selected at random. Of chosen tokens: 80% are replaced with [MASK], 10% are replaced with a random token, and 10% remain unchanged.",
+    "answerable": true
+  },
+  {
+    "id": "eval_019",
+    "category": "results",
+    "question": "What GLUE score did BERT_LARGE achieve compared to previous state-of-the-art systems?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [5, 6],
+    "expected_keywords": ["80.5", "GLUE", "BERT_LARGE", "outperformed"],
+    "reference_answer": "BERT_LARGE achieved a GLUE benchmark score of 80.5, outperforming OpenAI GPT and previous state of the art.",
+    "answerable": true
+  },
+  {
+    "id": "eval_020",
+    "category": "methodology",
+    "question": "What is the token representation input composed of in BERT?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [3],
+    "expected_keywords": ["token embeddings", "segment embeddings", "position embeddings", "[CLS]", "[SEP]"],
+    "reference_answer": "The input representation is the sum of Token Embeddings (WordPiece), Segment Embeddings (indicating sentence A or B), and Position Embeddings.",
+    "answerable": true
+  },
+  {
+    "id": "eval_021",
+    "category": "datasets",
+    "question": "What pre-training corpora were used for pre-training BERT?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [4],
+    "expected_keywords": ["BooksCorpus", "English Wikipedia", "800M words", "2500M words"],
+    "reference_answer": "BERT was pre-trained on BooksCorpus (800M words) and English Wikipedia (2,500M words).",
+    "answerable": true
+  },
+  {
+    "id": "eval_022",
+    "category": "limitations",
+    "question": "What pre-training and fine-tuning mismatch does the Masked Language Model introduce in BERT?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [4],
+    "expected_keywords": ["[MASK] token does not appear during fine-tuning", "mismatch"],
+    "reference_answer": "The [MASK] token never appears during downstream fine-tuning, creating a pre-training vs fine-tuning discrepancy that is mitigated by only replacing 80% of selected tokens with [MASK].",
+    "answerable": true
+  },
+  {
+    "id": "eval_023",
+    "category": "cross_paper",
+    "question": "How does BERT's bidirectional conditioning fundamentally differ from the standard Transformer decoder and OpenAI GPT?",
+    "document_ids": ["doc_attention_is_all_you_need", "doc_bert_pretraining"],
+    "expected_page_numbers": [2, 3],
+    "expected_keywords": ["left-to-right", "bidirectional", "masked language model", "decoder causal mask"],
+    "reference_answer": "OpenAI GPT and Transformer decoders use causal left-to-right attention masks where every token can only attend to previous tokens. In contrast, BERT's masked language model enables bidirectional self-attention across both left and right contexts simultaneously.",
+    "answerable": true
+  },
+  {
+    "id": "eval_024",
+    "category": "cross_paper",
+    "question": "Compare the model parameter count of Transformer base vs BERT_BASE.",
+    "document_ids": ["doc_attention_is_all_you_need", "doc_bert_pretraining"],
+    "expected_page_numbers": [5, 6],
+    "expected_keywords": ["65M", "110M", "layers = 12", "hidden size = 768"],
+    "reference_answer": "Transformer base has approximately 65M parameters (with d_model=512, 6 layers in encoder and decoder), whereas BERT_BASE has 110M parameters (12 layers, hidden size 768, 12 heads).",
+    "answerable": true
+  },
+  {
+    "id": "eval_025",
+    "category": "abstention",
+    "question": "Did BERT evaluate zero-shot reasoning on mathematical Olympiad problems in the 2018 paper?",
+    "document_ids": ["doc_bert_pretraining"],
+    "expected_page_numbers": [],
+    "expected_keywords": [],
+    "reference_answer": "Insufficient evidence. The BERT paper does not contain evaluations on mathematical Olympiad problems.",
+    "answerable": false
+  },
+  {
+    "id": "eval_026",
+    "category": "methodology",
+    "question": "What is the primary objective of Retrieval-Augmented Generation (RAG) introduced by Lewis et al.?",
+    "document_ids": ["doc_lewis_rag"],
+    "expected_page_numbers": [1, 2],
+    "expected_keywords": ["parametric memory", "non-parametric memory", "dense passage retrieval", "BART"],
+    "reference_answer": "RAG combines pre-trained parametric memory (a seq2seq model like BART) with non-parametric memory (a dense vector index of Wikipedia accessed via DPR) to reduce hallucinations and adapt to factual knowledge without continuous model retraining.",
+    "answerable": true
+  },
+  {
+    "id": "eval_027",
+    "category": "methodology",
+    "question": "What are the two formulations of RAG models proposed by Lewis et al. (RAG-Sequence vs RAG-Token)?",
+    "document_ids": ["doc_lewis_rag"],
+    "expected_page_numbers": [3],
+    "expected_keywords": ["RAG-Sequence", "RAG-Token", "marginalize", "per token", "top-K documents"],
+    "reference_answer": "RAG-Sequence uses the same retrieved document to generate the entire target sequence by marginalizing document probabilities, whereas RAG-Token can draw from different retrieved documents for each generated token.",
+    "answerable": true
+  },
+  {
+    "id": "eval_028",
+    "category": "results",
+    "question": "How did RAG perform on open-domain question answering benchmarks (Natural Questions, WebQuestions, CuratedTREC) compared to purely parametric models?",
+    "document_ids": ["doc_lewis_rag"],
+    "expected_page_numbers": [5, 6],
+    "expected_keywords": ["Natural Questions", "WebQuestions", "CuratedTREC", "state-of-the-art", "exact match"],
+    "reference_answer": "RAG established new state-of-the-art results on open-domain QA tasks, generating more specific, diverse, and factually grounded answers than purely parametric BART or T5 baselines.",
+    "answerable": true
+  },
+  {
+    "id": "eval_029",
+    "category": "limitations",
+    "question": "What is a key limitation of dense passage retrieval when facing out-of-domain technical jargon or precise numerical search?",
+    "document_ids": ["doc_lewis_rag"],
+    "expected_page_numbers": [7, 8],
+    "expected_keywords": ["dense retrieval", "lexical mismatch", "out-of-domain", "exact match"],
+    "reference_answer": "Dense retrievers struggle with rare entities, exact numerical codes, and out-of-domain vocabularies where BM25/lexical full-text search often outperforms pure vector cosine similarity.",
+    "answerable": true
+  },
+  {
+    "id": "eval_030",
+    "category": "cross_paper",
+    "question": "Why does ORION combine dense vector retrieval and lexical BM25 search via Reciprocal Rank Fusion?",
+    "document_ids": ["doc_lewis_rag"],
+    "expected_page_numbers": [1, 2],
+    "expected_keywords": ["hybrid retrieval", "dense", "lexical", "Reciprocal Rank Fusion", "RRF", "complementary"],
+    "reference_answer": "Dense embeddings excel at semantic similarity and paraphrase matching, while lexical search excels at precise keywords, acronyms, and formulas. Fusing their ranked lists via RRF yields robust hybrid retrieval across varied research queries.",
+    "answerable": true
+  },
+  {
+    "id": "eval_031",
+    "category": "methodology",
+    "question": "What is the formula for Reciprocal Rank Fusion (RRF) score of a document d across a set of rankers R?",
+    "document_ids": ["doc_rrf_information_retrieval"],
+    "expected_page_numbers": [2],
+    "expected_keywords": ["RRF(d)", "sum", "1 / (k + r(d))", "k = 60"],
+    "reference_answer": "RRF(d) = sum_{r in R} 1 / (k + r(d)), where r(d) is the rank of document d in ranker r, and k is a constant smoothing parameter typically set to 60.",
+    "answerable": true
+  },
+  {
+    "id": "eval_032",
+    "category": "methodology",
+    "question": "What embedding model is deployed in ORION for generating local document vectors and what are its dimensions?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [1],
+    "expected_keywords": ["BAAI/bge-small-en-v1.5", "384", "CPU", "sentence-transformers"],
+    "reference_answer": "ORION deploys BAAI/bge-small-en-v1.5 running locally on CPU via sentence-transformers, generating 384-dimensional dense vectors stored in PostgreSQL with pgvector.",
+    "answerable": true
+  },
+  {
+    "id": "eval_033",
+    "category": "methodology",
+    "question": "How does ORION extract text from PDF files while preserving page provenance?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [2],
+    "expected_keywords": ["PyMuPDF", "fitz", "page-by-page", "page numbers", "character offsets"],
+    "reference_answer": "ORION extracts PDF text page-by-page using PyMuPDF (fitz), preserving original page numbers, character offsets, and section boundaries without flattening the document.",
+    "answerable": true
+  },
+  {
+    "id": "eval_034",
+    "category": "methodology",
+    "question": "What chunking strategy does ORION employ to prevent missing cross-page boundary sentences?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [2],
+    "expected_keywords": ["chunk size", "chunk overlap", "page provenance", "multi-page"],
+    "reference_answer": "ORION chunks text with a configurable target size (default 500 characters) and overlap (default 80 characters), preserving all contributing page numbers in multi-page chunk metadata.",
+    "answerable": true
+  },
+  {
+    "id": "eval_035",
+    "category": "methodology",
+    "question": "What are the stages of citation validation in ORION's answer generation pipeline?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [3],
+    "expected_keywords": ["existence check", "database verification", "claim classification", "supported", "unsupported"],
+    "reference_answer": "1. Verify citation ID against context chunk IDs. 2. Fetch ground-truth filename and page numbers from database. 3. Classify claims into supported/partially_supported/unsupported. 4. Flag or abstain if citations fail.",
+    "answerable": true
+  },
+  {
+    "id": "eval_036",
+    "category": "abstention",
+    "question": "What does ORION do if all retrieved document passages have relevance scores below the acceptable threshold?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [3],
+    "expected_keywords": ["insufficient_evidence", "abstain", "empty citations"],
+    "reference_answer": "ORION sets insufficient_evidence: true and returns a transparent abstention message indicating that the provided documents do not contain evidence to answer the question.",
+    "answerable": false
+  },
+  {
+    "id": "eval_037",
+    "category": "security",
+    "question": "How does ORION prevent cross-tenant data leakage during vector search?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [4],
+    "expected_keywords": ["owner_id", "filter", "tenant isolation", "JOIN documents"],
+    "reference_answer": "All vector and lexical search queries enforce an inner join with the documents table filtering strictly on documents.owner_id = current_user.id before executing similarity distance ranking.",
+    "answerable": true
+  },
+  {
+    "id": "eval_038",
+    "category": "security",
+    "question": "How does ORION defend against prompt injection embedded in uploaded PDFs?",
+    "document_ids": ["doc_orion_threat_model"],
+    "expected_page_numbers": [1, 2],
+    "expected_keywords": ["XML boundary tags", "system prompt instructions", "untrusted data", "Pydantic validation"],
+    "reference_answer": "Retrieved passages are wrapped in XML tags, the system prompt treats passages as untrusted data, and output is strictly constrained to a Pydantic schema.",
+    "answerable": true
+  },
+  {
+    "id": "eval_039",
+    "category": "difficult_retrieval",
+    "question": "What is the exact parameter update equation for Adam in Section 5.3 of Attention Is All You Need?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7],
+    "expected_keywords": ["lrate", "d_model^(-0.5)", "min(step_num^(-0.5), step_num * warmup_steps^(-1.5))"],
+    "reference_answer": "lrate = d_model^(-0.5) * min(step_num^(-0.5), step_num * warmup_steps^(-1.5)).",
+    "answerable": true
+  },
+  {
+    "id": "eval_040",
+    "category": "difficult_retrieval",
+    "question": "What was the exact learning rate warmup step count used in the Transformer big model?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7, 8],
+    "expected_keywords": ["warmup_steps = 4000", "big model", "Table 3"],
+    "reference_answer": "warmup_steps = 4000 was used for both base and big models.",
+    "answerable": true
+  },
+  {
+    "id": "eval_041",
+    "category": "conflicting_evidence",
+    "question": "Do Transformer self-attention and RNNs have the same sequential operations per layer?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [6],
+    "expected_keywords": ["O(1)", "O(n)", "sequential operations", "Table 1"],
+    "reference_answer": "No. Self-attention requires O(1) sequential operations per layer, whereas Recurrent layers require O(n) sequential operations.",
+    "answerable": true
+  },
+  {
+    "id": "eval_042",
+    "category": "multi_passage",
+    "question": "Summarize the three distinct ways Multi-Head Attention is used within the Transformer encoder-decoder architecture.",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [3, 4],
+    "expected_keywords": ["encoder self-attention", "decoder self-attention", "encoder-decoder cross-attention"],
+    "reference_answer": "1. Encoder self-attention (keys, values, and queries from encoder output). 2. Decoder self-attention (masked so queries cannot attend to subsequent positions). 3. Encoder-decoder attention (queries from decoder, keys and values from encoder).",
+    "answerable": true
+  },
+  {
+    "id": "eval_043",
+    "category": "single_passage",
+    "question": "What software library or framework did the original authors use to train the Transformer in Attention Is All You Need?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [7],
+    "expected_keywords": ["Tensor2Tensor", "library", "TensorFlow"],
+    "reference_answer": "The authors used the Tensor2Tensor library with TensorFlow.",
+    "answerable": true
+  },
+  {
+    "id": "eval_044",
+    "category": "datasets",
+    "question": "What English constituency parsing dataset was evaluated to test the Transformer's generalization?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [9],
+    "expected_keywords": ["Penn Treebank", "Wall Street Journal", "Section 23", "F1 score"],
+    "reference_answer": "The Penn Treebank (WSJ Section 23) constituency parsing dataset, achieving an F1 score of 91.3.",
+    "answerable": true
+  },
+  {
+    "id": "eval_045",
+    "category": "abstention",
+    "question": "What is the battery drain percentage when running Transformer inference on an Apple Watch Series 6?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [],
+    "expected_keywords": [],
+    "reference_answer": "Insufficient evidence. The paper does not conduct experiments on mobile or wearable battery consumption.",
+    "answerable": false
+  },
+  {
+    "id": "eval_046",
+    "category": "methodology",
+    "question": "What activation function is used in the feed-forward network of the original Transformer?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [5],
+    "expected_keywords": ["ReLU", "max(0, xW_1 + b_1)W_2 + b_2"],
+    "reference_answer": "The Rectified Linear Unit (ReLU) activation function: FFN(x) = max(0, xW_1 + b_1)W_2 + b_2.",
+    "answerable": true
+  },
+  {
+    "id": "eval_047",
+    "category": "cross_paper",
+    "question": "Which model handles long text context better: vanilla Transformer with O(n^2) attention or FlashAttention with tiled IO-aware kernels?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [6],
+    "expected_keywords": ["quadratic complexity", "memory bandwidth", "long context"],
+    "reference_answer": "Vanilla Transformer scales quadratically O(n^2) in memory and compute. FlashAttention optimizes IO-awareness to reduce memory footprint from quadratic to linear with respect to sequence length.",
+    "answerable": true
+  },
+  {
+    "id": "eval_048",
+    "category": "limitations",
+    "question": "What happens if an ingested PDF has no extractable text layer (e.g. scanned image-only PDF)?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [2],
+    "expected_keywords": ["scanned", "image-only", "OCR required", "extraction warning"],
+    "reference_answer": "ORION detects zero extracted text, logs an extraction warning, and reports to the user that OCR is required rather than completing silently with empty chunks.",
+    "answerable": true
+  },
+  {
+    "id": "eval_049",
+    "category": "methodology",
+    "question": "How does ORION handle paper comparison across multiple documents?",
+    "document_ids": ["doc_orion_architecture"],
+    "expected_page_numbers": [3],
+    "expected_keywords": ["side-by-side", "methodology", "datasets", "results", "limitations", "contradictions"],
+    "reference_answer": "ORION retrieves evidence independently per document for standard comparison dimensions (Problem, Methodology, Datasets, Results, Limitations), surfaces citations per field, and detects contradictions.",
+    "answerable": true
+  },
+  {
+    "id": "eval_050",
+    "category": "abstention",
+    "question": "What was the result of training the Transformer model on the Martian geological survey dataset?",
+    "document_ids": ["doc_attention_is_all_you_need"],
+    "expected_page_numbers": [],
+    "expected_keywords": [],
+    "reference_answer": "Insufficient evidence. The paper does not evaluate or mention Martian geological data.",
+    "answerable": false
+  },
+  {
+    "id": "eval_051",
+    "category": "security",
+    "question": "Are database passwords or Gemini API keys ever exposed in ORION's frontend code or public responses?",
+    "document_ids": ["doc_orion_threat_model"],
+    "expected_page_numbers": [1, 2],
+    "expected_keywords": ["zero exposure", "server-side only", "environment variables", "redaction"],
+    "reference_answer": "Never. Secrets reside solely in server-side environment variables and are excluded from frontend bundles, logs, and public API responses.",
+    "answerable": true
+  }
+]

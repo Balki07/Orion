@@ -1,0 +1,46 @@
+{
+  "evaluation_timestamp": "2026-10-19T06:52:46.379381+00:00",
+  "dataset_version": "v1.0",
+  "dataset_size": 51,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "embedding_dimensions": 384,
+  "gemini_model": "gemini-1.5-flash",
+  "strategies": {
+    "vector_only": {
+      "recall_at_k": 0.82,
+      "precision_at_k": 0.7215999999999998,
+      "mrr": 0.9545454545454546,
+      "citation_validity_rate": 0.9309803921568628,
+      "unsupported_claim_rate": 0.06,
+      "abstention_accuracy": 1.0,
+      "latency_p50_ms": 41.01570001570508,
+      "latency_p95_ms": 46.56605000549462,
+      "total_items_evaluated": 51,
+      "duration_seconds": 1.353526899998542
+    },
+    "hybrid": {
+      "recall_at_k": 0.9399999999999996,
+      "precision_at_k": 0.8271999999999996,
+      "mrr": 0.9204545454545454,
+      "citation_validity_rate": 0.9827450980392156,
+      "unsupported_claim_rate": 0.02,
+      "abstention_accuracy": 1.0,
+      "latency_p50_ms": 53.20669999648817,
+      "latency_p95_ms": 55.497649993165396,
+      "total_items_evaluated": 51,
+      "duration_seconds": 1.2576743999961764
+    },
+    "hybrid_rerank": {
+      "recall_at_k": 0.9600000000000001,
+      "precision_at_k": 0.8448,
+      "mrr": 0.9772727272727273,
+      "citation_validity_rate": 0.9827450980392156,
+      "unsupported_claim_rate": 0.02,
+      "abstention_accuracy": 1.0,
+      "latency_p50_ms": 92.46100001968443,
+      "latency_p95_ms": 110.93454998394009,
+      "total_items_evaluated": 51,
+      "duration_seconds": 1.5453199000039604
+    }
+  }
+}
