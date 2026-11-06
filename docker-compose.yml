@@ -24,14 +24,17 @@ services:
     container_name: orion-backend
     restart: unless-stopped
     environment:
-      - ORION_ENV=production
+      - ENVIRONMENT=development
+      - SECRET_KEY=${SECRET_KEY:-docker-compose-test-secret-key-32-chars-min}
       - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/orion
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-1.5-flash}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:80,http://127.0.0.1:5173
       - STORAGE_PROVIDER=local
       - STORAGE_LOCAL_DIR=/app/storage/uploads
       - DEV_AUTH_BYPASS=false
-      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET:-}
+      - HNSW_EF_SEARCH=40
+      - USER_DOCUMENT_LIMIT=50
     ports:
       - "8000:8000"
     volumes:

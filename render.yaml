@@ -1,0 +1,95 @@
+services:
+  - type: web
+    name: orion-backend
+    runtime: docker
+    plan: starter # Minimum 1 GB RAM recommended (or standard 2 GB for heavy ingestion)
+    region: oregon
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: ORION_ENV
+        value: production
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+      - key: DEV_AUTH_BYPASS
+        value: "false"
+      - key: STORAGE_PROVIDER
+        value: s3
+      - key: S3_REGION_NAME
+        value: auto
+      - key: S3_BUCKET_NAME
+        value: orion-research-documents
+      - key: USER_STORAGE_QUOTA_MB
+        value: "500"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: worker
+    name: orion-ingestion-worker
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: python -m app.services.ingestion.worker
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: ORION_ENV
+        value: production
+      - key: DEV_AUTH_BYPASS
+        value: "false"
+      - key: STORAGE_PROVIDER
+        value: s3
+      - key: S3_REGION_NAME
+        value: auto
+      - key: S3_BUCKET_NAME
+        value: orion-research-documents
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: orion-backend
+          envVarKey: SECRET_KEY
+      - key: DATABASE_URL
+        fromService:
+          type: web
+          name: orion-backend
+          envVarKey: DATABASE_URL
+      - key: GEMINI_API_KEY
+        fromService:
+          type: web
+          name: orion-backend
+          envVarKey: GEMINI_API_KEY
+      - key: S3_ENDPOINT_URL
+        fromService:
+          type: web
+          name: orion-backend
+          envVarKey: S3_ENDPOINT_URL
+      - key: S3_ACCESS_KEY_ID
+        fromService:
+          type: web
+          name: orion-backend
+          envVarKey: S3_ACCESS_KEY_ID
+      - key: S3_SECRET_ACCESS_KEY
+        fromService:
+          type: web
+          name: orion-backend
+          envVarKey: S3_SECRET_ACCESS_KEY
+

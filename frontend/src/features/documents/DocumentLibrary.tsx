@@ -10,8 +10,10 @@ import {
   AlertCircle,
   Clock,
   Layers,
+  HardDrive,
+  AlertTriangle,
 } from 'lucide-react';
-import { DocumentItem, CollectionItem } from '../../types';
+import { DocumentItem, CollectionItem, StorageUsageResponse } from '../../types';
 import { api } from '../../services/api';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { UploadModal } from './UploadModal';
@@ -20,6 +22,8 @@ import { DocumentDetailModal } from './DocumentDetailModal';
 export const DocumentLibrary: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [collections, setCollections] = useState<CollectionItem[]>([]);
+  const [storageUsage, setStorageUsage] = useState<StorageUsageResponse | null>(null);
+  const [isStorageLoading, setIsStorageLoading] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -27,6 +31,18 @@ export const DocumentLibrary: React.FC = () => {
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
   const [detailDoc, setDetailDoc] = useState<DocumentItem | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const fetchStorageUsage = async () => {
+    try {
+      setIsStorageLoading(true);
+      const usage = await api.getStorageUsage();
+      setStorageUsage(usage);
+    } catch (err) {
+      console.error('Failed to load storage usage:', err);
+    } finally {
+      setIsStorageLoading(false);
+    }
+  };
 
   const fetchDocuments = async () => {
     try {
@@ -55,6 +71,7 @@ export const DocumentLibrary: React.FC = () => {
   useEffect(() => {
     fetchDocuments();
     fetchCollections();
+    fetchStorageUsage();
   }, [searchTerm, statusFilter, selectedCollectionId]);
 
   // Polling for documents in non-final states
@@ -66,6 +83,7 @@ export const DocumentLibrary: React.FC = () => {
 
     const interval = setInterval(() => {
       fetchDocuments();
+      fetchStorageUsage();
     }, 2500);
 
     return () => clearInterval(interval);
@@ -79,6 +97,7 @@ export const DocumentLibrary: React.FC = () => {
     try {
       await api.deleteDocument(docId);
       setDocuments((prev) => prev.filter((d) => d.id !== docId));
+      fetchStorageUsage();
       setDeletingId(null);
     } catch (err: any) {
       alert(`Deletion failed: ${err.message}`);
@@ -90,17 +109,25 @@ export const DocumentLibrary: React.FC = () => {
     try {
       await api.retryIngestion(docId);
       fetchDocuments();
+      fetchStorageUsage();
     } catch (err: any) {
       alert(`Retry failed: ${err.message}`);
     }
   };
 
+  const formatBytes = (bytes: number): string => {
+    if (bytes === 0) return '0 MB';
+    const mb = bytes / (1024 * 1024);
+    if (mb < 0.1) return '< 0.1 MB';
+    return `${mb.toFixed(1)} MB`;
+  };
+
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Title & Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-ink-950">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-ink-950">
             Document Library
           </h1>
           <p className="text-xs text-ink-500 mt-1">
@@ -110,9 +137,12 @@ export const DocumentLibrary: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={fetchDocuments}
+            onClick={() => {
+              fetchDocuments();
+              fetchStorageUsage();
+            }}
             className="p-2 rounded-lg border border-parchment-300 hover:bg-parchment-100 text-ink-700 transition-colors"
-            title="Refresh document status"
+            title="Refresh document status and storage quota"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -126,6 +156,72 @@ export const DocumentLibrary: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Storage Governance Meter Card */}
+      {storageUsage && (
+        <div className="bg-white rounded-xl border border-parchment-300 p-4 sm:p-5 shadow-xs space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-parchment-100 flex items-center justify-center text-ink-700 shrink-0">
+                <HardDrive className="w-4 h-4 text-amber-700" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-ink-900">User Storage Quota</h3>
+                  <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full bg-parchment-200 text-ink-700 font-medium">
+                    {storageUsage.quota_mb} MB Pilot Cap
+                  </span>
+                </div>
+                <p className="text-xs text-ink-500">
+                  Cumulative research PDF capacity enforced across isolated multi-tenant storage.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-left sm:text-right">
+              <div className="text-sm font-semibold text-ink-900 font-mono">
+                {formatBytes(storageUsage.used_storage_bytes)} / {storageUsage.quota_mb} MB
+                <span className="text-ink-500 font-sans text-xs ml-1.5 font-normal">
+                  ({storageUsage.usage_percentage}%)
+                </span>
+              </div>
+              <div className="text-xs text-ink-500">
+                {formatBytes(storageUsage.remaining_storage_bytes)} remaining ({storageUsage.document_count} {storageUsage.document_count === 1 ? 'document' : 'documents'})
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="w-full bg-parchment-200 rounded-full h-2.5 overflow-hidden">
+            <div
+              className={`h-full transition-all duration-500 rounded-full ${
+                storageUsage.usage_percentage >= 95
+                  ? 'bg-red-600'
+                  : storageUsage.usage_percentage >= 80
+                  ? 'bg-amber-600'
+                  : 'bg-navy-700'
+              }`}
+              style={{ width: `${Math.min(100, Math.max(0, storageUsage.usage_percentage))}%` }}
+            />
+          </div>
+
+          {/* Warning Banner when approaching or exceeding quota */}
+          {storageUsage.usage_percentage >= 80 && (
+            <div className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg ${
+              storageUsage.usage_percentage >= 95
+                ? 'bg-red-50 text-red-800 border border-red-200'
+                : 'bg-amber-50 text-amber-800 border border-amber-200'
+            }`}>
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>
+                {storageUsage.usage_percentage >= 95
+                  ? `Storage quota almost exhausted (${storageUsage.usage_percentage}% used). Delete older documents before uploading additional research papers.`
+                  : `Approaching storage limit (${storageUsage.usage_percentage}% used). ${formatBytes(storageUsage.remaining_storage_bytes)} remaining.`}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Filters & Search */}
       <div className="flex flex-wrap items-center gap-3 p-4 bg-white rounded-xl border border-parchment-300 shadow-xs">
@@ -210,9 +306,16 @@ export const DocumentLibrary: React.FC = () => {
               <tbody className="divide-y divide-parchment-200 text-ink-900">
                 {documents.map((doc) => (
                   <tr key={doc.id} className="hover:bg-parchment-50/80 transition-colors">
-                    <td className="py-3 px-4 font-medium flex items-center gap-2.5">
-                      <FileText className="w-4 h-4 text-navy-700 shrink-0" />
-                      <span className="truncate max-w-xs">{doc.filename}</span>
+                    <td className="py-3 px-4 font-medium">
+                      <div className="flex items-center gap-2.5">
+                        <FileText className={`w-4 h-4 shrink-0 ${doc.status === 'failed' ? 'text-red-600' : 'text-navy-700'}`} />
+                        <span className="truncate max-w-xs">{doc.filename}</span>
+                      </div>
+                      {doc.status === 'failed' && doc.processing_error && (
+                        <p className="text-[11px] text-red-600 font-normal mt-0.5 truncate max-w-md" title={doc.processing_error}>
+                          {doc.processing_error}
+                        </p>
+                      )}
                     </td>
                     <td className="py-3 px-4">
                       <StatusBadge status={doc.status} />
@@ -272,7 +375,10 @@ export const DocumentLibrary: React.FC = () => {
       <UploadModal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
-        onUploadSuccess={fetchDocuments}
+        onUploadSuccess={() => {
+          fetchDocuments();
+          fetchStorageUsage();
+        }}
         collections={collections}
       />
 

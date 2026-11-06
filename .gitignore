@@ -1,13 +1,29 @@
-# Python
+# ==============================================================================
+# ORION — Git Ignore Specification
+# ==============================================================================
+
+# --- Environment & Secret Configuration Files ---
+.env
+.env.*
+*.env
+*.env.*
+**/.env
+**/.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# --- Python Virtual Environments & Packages ---
+.venv/
+venv/
+ENV/
+env/
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
 develop-eggs/
-dist/
-downloads/
 eggs/
 .eggs/
 lib/
@@ -21,24 +37,22 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-.env
-.env.local
-.venv
-venv/
-ENV/
-env/
 
-# Node
+# --- Node & Frontend Build Artifacts ---
 node_modules/
+**/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+lerna-debug.log*
 dist/
 dist-ssr/
+build/
+.vite/
 *.local
 
-# Testing and coverage
+# --- Testing, Coverage & Caches ---
 .coverage
 htmlcov/
 .pytest_cache/
@@ -49,17 +63,38 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
-# Databases & local storage
+# --- Databases, Storage & Backups ---
+*.sqlite
 *.sqlite3
 *.db
+*.db-*
+*.bak
+*.bak_*
+*.dump
+*.sql
+*.sql.gz
 storage/
-storage/uploads/
-storage/exports/
+**/storage/
+backend/storage/
+scratch/
 
-# IDE & OS
+# --- IDE, Editor & OS Artifacts ---
 .vscode/
 .idea/
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 .DS_Store
 Thumbs.db
+Desktop.ini
+.agents/
+.antigravity/
+
+# --- Logs & Temporary Files ---
+logs/
+*.log
+tmp/
+temp/

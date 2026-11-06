@@ -1,9 +1,10 @@
-"""ORION Ingestion Pipeline orchestrator."""
+import asyncio
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.errors import IngestionError
 from app.core.logging import logger
 from app.models.chunk import Chunk
 from app.models.document import Document
@@ -22,90 +23,108 @@ class IngestionPipeline:
             chunk_overlap=settings.CHUNK_OVERLAP,
         )
         self.embedder = get_embedder()
+        self._semaphore = asyncio.Semaphore(2)
 
     async def process_document(self, document_id: str, db: AsyncSession) -> Document:
         """Executes full ingestion pipeline asynchronously:
 
         storage read -> validate -> extract -> chunk -> embed -> persist -> complete.
         """
-        stmt = select(Document).where(Document.id == document_id)
-        res = await db.execute(stmt)
-        doc = res.scalar_one_or_none()
-        if not doc:
-            raise ValueError(f"Document {document_id} not found for ingestion.")
+        async with self._semaphore:
+            stmt = select(Document).where(Document.id == document_id)
+            res = await db.execute(stmt)
+            doc = res.scalar_one_or_none()
+            if not doc:
+                raise ValueError(f"Document {document_id} not found for ingestion.")
 
-        try:
-            logger.info(f"Starting ingestion for document {document_id} ('{doc.filename}')...")
+            try:
+                logger.info(f"Starting ingestion for document {document_id} ('{doc.filename}')...")
 
-            # 1. State: validating
-            doc.status = "validating"
-            await db.commit()
+                # 1. State: validating
+                doc.status = "validating"
+                await db.commit()
 
-            pdf_bytes = await self.storage.read_file(doc.storage_key)
-            if not pdf_bytes:
-                raise ValueError("PDF content could not be read from storage.")
+                pdf_bytes = await self.storage.read_file(doc.storage_key)
+                if not pdf_bytes:
+                    raise ValueError("PDF content could not be read from storage.")
 
-            # 2. State: extracting
-            doc.status = "extracting"
-            await db.commit()
+                # 2. State: extracting
+                doc.status = "extracting"
+                await db.commit()
 
-            extraction = self.extractor.extract_from_bytes(pdf_bytes, filename=doc.filename)
-            doc.page_count = extraction.total_pages
-            doc.extraction_warnings = extraction.warnings
-            await db.commit()
+                extraction = self.extractor.extract_from_bytes(pdf_bytes, filename=doc.filename)
+                doc.page_count = extraction.total_pages
+                doc.extraction_warnings = extraction.warnings
+                await db.commit()
 
-            # 3. State: chunking
-            doc.status = "chunking"
-            await db.commit()
+                # 3. State: chunking
+                doc.status = "chunking"
+                await db.commit()
 
-            text_chunks = self.chunker.chunk_pages(extraction.pages)
-            if not text_chunks and not extraction.is_scanned_or_empty:
-                raise ValueError("Failed to produce text chunks from extracted document pages.")
+                text_chunks = self.chunker.chunk_pages(extraction.pages)
+                if not text_chunks:
+                    raise IngestionError(
+                        "This PDF appears to contain scanned images or no extractable text. OCR is not currently supported. Please upload a text-based PDF.",
+                        stage="chunking",
+                        error_code="ERR_PDF_SCANNED_NO_TEXT",
+                    )
 
-            # 4. State: embedding
-            doc.status = "embedding"
-            await db.commit()
+                # 4. State: embedding
+                doc.status = "embedding"
+                await db.commit()
 
-            texts_to_embed = [tc.text for tc in text_chunks]
-            embeddings = self.embedder.embed_texts(texts_to_embed)
+                texts_to_embed = [tc.text for tc in text_chunks]
+                embeddings = self.embedder.embed_texts(texts_to_embed)
 
-            # 5. State: indexing (Remove old chunks if retrying, then bulk insert)
-            doc.status = "indexing"
-            await db.commit()
+                # 5. State: indexing (Remove old chunks if retrying, then bulk insert)
+                doc.status = "indexing"
+                await db.commit()
 
-            await db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
+                await db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
 
-            for tc, emb in zip(text_chunks, embeddings):
-                chunk = Chunk(
-                    document_id=doc.id,
-                    chunk_index=tc.chunk_index,
-                    text=tc.text,
-                    page_numbers=tc.page_numbers,
-                    character_start=tc.character_start,
-                    character_end=tc.character_end,
-                    token_count=tc.token_count,
-                    embedding=emb,
-                    embedding_model=self.embedder.model_name,
+                for tc, emb in zip(text_chunks, embeddings):
+                    chunk = Chunk(
+                        document_id=doc.id,
+                        chunk_index=tc.chunk_index,
+                        text=tc.text,
+                        page_numbers=tc.page_numbers,
+                        character_start=tc.character_start,
+                        character_end=tc.character_end,
+                        token_count=tc.token_count,
+                        embedding=emb,
+                        embedding_model=self.embedder.model_name,
+                    )
+                    db.add(chunk)
+
+                # 6. State: completed
+                doc.status = "completed"
+                doc.processing_error = None
+                await db.commit()
+                await db.refresh(doc)
+                logger.info(
+                    f"Ingestion completed for document {document_id}: "
+                    f"{len(text_chunks)} chunks indexed across {doc.page_count} pages."
                 )
-                db.add(chunk)
+                return doc
 
-            # 6. State: completed
-            doc.status = "completed"
-            doc.processing_error = None
-            await db.commit()
-            await db.refresh(doc)
-            logger.info(
-                f"Ingestion completed for document {document_id}: "
-                f"{len(text_chunks)} chunks indexed across {doc.page_count} pages."
-            )
-            return doc
-
-        except Exception as e:
-            logger.error(f"Ingestion failed for document {document_id}: {e!s}", exc_info=True)
-            doc.status = "failed"
-            doc.processing_error = str(e)
-            await db.commit()
-            raise
+            except IngestionError as e:
+                logger.warning(
+                    f"Ingestion failed for document {document_id} with IngestionError [{e.error_code}]: {e.detail}"
+                )
+                doc.status = "failed"
+                doc.processing_error = e.detail
+                doc.extraction_warnings = [f"error_code={e.error_code}"]
+                await db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
+                await db.commit()
+                raise
+            except Exception as e:
+                logger.error(f"Ingestion failed for document {document_id}: {e!s}", exc_info=True)
+                doc.status = "failed"
+                doc.processing_error = "An unexpected error occurred during document processing. Please verify the file and try again."
+                doc.extraction_warnings = ["error_code=ERR_INGESTION_INTERNAL"]
+                await db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
+                await db.commit()
+                raise
 
 
 _PIPELINE_INSTANCE = None

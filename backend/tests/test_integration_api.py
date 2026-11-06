@@ -36,6 +36,22 @@ async def test_full_document_lifecycle_and_qa(client, sample_pdf_bytes):
     assert page_resp.status_code == 200
     assert "Scaled Dot-Product Attention" in page_resp.json()["text"]
 
+    # 4b. Check raw PDF file streaming endpoint
+    file_resp = await client.get(f"/api/v1/documents/{doc_id}/file", headers=headers_user_a)
+    assert file_resp.status_code == 200
+    assert file_resp.headers["content-type"] == "application/pdf"
+    assert len(file_resp.content) > 0
+
+    # 4c. Check crisp page PNG rendering endpoint
+    render_resp = await client.get(f"/api/v1/documents/{doc_id}/pages/2/render", headers=headers_user_a)
+    assert render_resp.status_code == 200
+    assert render_resp.headers["content-type"] == "image/png"
+    assert len(render_resp.content) > 0
+
+    # 4d. Out-of-bounds page rendering yields validation error
+    invalid_render = await client.get(f"/api/v1/documents/{doc_id}/pages/99/render", headers=headers_user_a)
+    assert invalid_render.status_code in (400, 422)
+
     # 5. Ask answerable question
     ask_payload = {
         "question": "What is the formula for Scaled Dot-Product Attention and what BLEU score was achieved?",
@@ -93,3 +109,107 @@ async def test_full_document_lifecycle_and_qa(client, sample_pdf_bytes):
     # Verify document is gone
     gone_resp = await client.get(f"/api/v1/documents/{doc_id}", headers=headers_user_a)
     assert gone_resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_batch_upload_multiple_valid_pdfs(client, sample_pdf_bytes):
+    """Test batch uploading multiple valid research PDFs simultaneously."""
+    headers = {"X-User-Id": "user_batch_tester"}
+
+    files = [
+        ("files", ("paper_1.pdf", io.BytesIO(sample_pdf_bytes), "application/pdf")),
+        ("files", ("paper_2.pdf", io.BytesIO(sample_pdf_bytes), "application/pdf")),
+    ]
+    resp = await client.post("/api/v1/documents/batch", files=files, headers=headers)
+    assert resp.status_code == 201
+    data = resp.json()
+
+    assert data["total"] == 2
+    assert data["successful_count"] == 2
+    assert data["failed_count"] == 0
+    assert len(data["items"]) == 2
+
+    # Verify both documents received distinct IDs
+    doc1 = data["items"][0]["document"]
+    doc2 = data["items"][1]["document"]
+    assert doc1 is not None and doc2 is not None
+    assert doc1["id"] != doc2["id"]
+    assert doc1["owner_id"] == "user_batch_tester"
+
+
+@pytest.mark.asyncio
+async def test_batch_upload_partial_failure(client, sample_pdf_bytes):
+    """Test batch uploading with mixed valid, non-PDF, and corrupt files."""
+    headers = {"X-User-Id": "user_partial_tester"}
+
+    corrupt_pdf_bytes = b"Not a real PDF without header"
+    files = [
+        ("files", ("valid.pdf", io.BytesIO(sample_pdf_bytes), "application/pdf")),
+        ("files", ("invalid.txt", io.BytesIO(b"Hello world"), "text/plain")),
+        ("files", ("corrupted.pdf", io.BytesIO(corrupt_pdf_bytes), "application/pdf")),
+    ]
+    resp = await client.post("/api/v1/documents/batch", files=files, headers=headers)
+    assert resp.status_code == 201
+    data = resp.json()
+
+    assert data["total"] == 3
+    assert data["successful_count"] == 1
+    assert data["failed_count"] == 2
+
+    # First item succeeded
+    assert data["items"][0]["status"] == "queued"
+    assert data["items"][0]["document"]["filename"] == "valid.pdf"
+
+    # Second item rejected (non-PDF)
+    assert data["items"][1]["status"] == "rejected"
+    assert "Only PDF documents" in data["items"][1]["error"]
+
+    # Third item rejected (bad magic bytes)
+    assert data["items"][2]["status"] == "rejected"
+    assert "PDF header signature" in data["items"][2]["error"]
+
+
+@pytest.mark.asyncio
+async def test_batch_upload_duplicate_handling(client, sample_pdf_bytes):
+    """Test that uploading a file that was already completed returns existing completed document."""
+    headers = {"X-User-Id": "user_dup_tester"}
+
+    # 1. Ingest first copy
+    single_file = {"file": ("original.pdf", io.BytesIO(sample_pdf_bytes), "application/pdf")}
+    init_res = await client.post("/api/v1/documents", files=single_file, headers=headers)
+    assert init_res.status_code == 201
+    doc_id = init_res.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id, session)
+
+    # 2. Batch upload containing duplicate
+    files = [
+        ("files", ("duplicate_copy.pdf", io.BytesIO(sample_pdf_bytes), "application/pdf")),
+    ]
+    batch_res = await client.post("/api/v1/documents/batch", files=files, headers=headers)
+    assert batch_res.status_code == 201
+    data = batch_res.json()
+
+    assert data["total"] == 1
+    assert data["successful_count"] == 1
+    assert data["items"][0]["status"] == "completed"
+    assert data["items"][0]["document"]["id"] == doc_id
+
+
+@pytest.mark.asyncio
+async def test_batch_upload_limit_enforcement(client, sample_pdf_bytes):
+    """Test that attempting to upload more than MAX_BATCH_FILES raises validation error."""
+    headers = {"X-User-Id": "user_limit_tester"}
+
+    # Exceed limit (> 10 files)
+    files = [
+        ("files", (f"paper_{i}.pdf", io.BytesIO(sample_pdf_bytes), "application/pdf"))
+        for i in range(12)
+    ]
+    resp = await client.post("/api/v1/documents/batch", files=files, headers=headers)
+    assert resp.status_code == 400
+    assert "exceeds the limit" in resp.json()["detail"]
+

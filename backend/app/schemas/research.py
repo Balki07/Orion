@@ -33,15 +33,36 @@ class AskRequest(BaseModel):
     enable_reranking: bool = Field(default=False)
 
 
+class PipelineDiagnostics(BaseModel):
+    trace_id: str
+    reason_code: str
+    reason_description: str
+    insufficient_evidence: bool = False
+    total_latency_ms: float = 0.0
+    stages: list[dict] = Field(default_factory=list)
+
+
 class AskResponse(BaseModel):
     answer: str
     claims: list[Claim] = Field(default_factory=list)
     citations: list[Citation] = Field(default_factory=list)
     insufficient_evidence: bool = False
+    reason_code: str | None = Field(default=None, description="Stage failure/success classification code")
+    trace_id: str | None = Field(default=None, description="Correlation ID for end-to-end request tracing")
+    diagnostics: PipelineDiagnostics | None = Field(default=None, description="Detailed 12-stage diagnostics")
     warnings: list[str] = Field(default_factory=list)
     session_id: str | None = None
     message_id: str | None = None
     latency_ms: dict[str, float] = Field(default_factory=dict)
+    model: str | None = Field(default=None, description="Model or engine that generated the answer (null for fallback)")
+    answer_path: Literal["gemini", "deterministic_fallback"] = Field(
+        default="deterministic_fallback",
+        description="Execution path used: gemini or deterministic_fallback",
+    )
+    fallback_reason: Literal["QUOTA", "MODEL_NOT_FOUND", "BAD_KEY", "KEY_NOT_LOADED", "NETWORK", "UNAVAILABLE", "OTHER"] | None = Field(
+        default=None,
+        description="Classified cause of fallback when answer_path is deterministic_fallback",
+    )
 
 
 # --- Paper Comparison Schemas ---

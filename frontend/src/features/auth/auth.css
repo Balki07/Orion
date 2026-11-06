@@ -1,0 +1,499 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+/* Scoped under .orion-auth-shell to prevent global theme or style leakage */
+.orion-auth-shell {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 100svh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-direction: column;
+  background: #17130f;
+  color: #fff8eb;
+  font-family: "Manrope", system-ui, -apple-system, sans-serif;
+  isolation: isolate;
+  box-sizing: border-box;
+}
+
+.orion-auth-shell *,
+.orion-auth-shell *::before,
+.orion-auth-shell *::after {
+  box-sizing: border-box;
+}
+
+.orion-auth-shell .sphere-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.orion-auth-shell .sphere-layer canvas {
+  opacity: 0.98;
+  filter: drop-shadow(0 0 18px rgba(255, 170, 45, 0.26));
+}
+
+.orion-auth-shell .orion-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 54% 46%, transparent 0 24%, rgba(23, 19, 15, 0.12) 48%, rgba(23, 19, 15, 0.7) 100%),
+    linear-gradient(90deg, rgba(23, 19, 15, 0.65), transparent 42%, rgba(23, 19, 15, 0.2));
+}
+
+.orion-auth-shell .orion-header,
+.orion-auth-shell .orion-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px clamp(24px, 6vw, 88px);
+}
+
+.orion-auth-shell .orion-header,
+.orion-auth-shell .auth-layout,
+.orion-auth-shell .orion-footer {
+  position: relative;
+  z-index: 2;
+}
+
+.orion-auth-shell .orion-header {
+  border-bottom: 1px solid rgba(255, 244, 225, 0.11);
+}
+
+.orion-auth-shell .orion-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #fff8eb;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-decoration: none;
+}
+
+.orion-auth-shell .brand-mark {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border: 1px solid #ffb84c;
+  border-radius: 50%;
+  color: #ffb84c;
+  font-family: "DM Mono", monospace;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.orion-auth-shell .header-status,
+.orion-auth-shell .orion-footer {
+  color: rgba(255, 244, 225, 0.55);
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+
+.orion-auth-shell .header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orion-auth-shell .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a7e58c;
+  box-shadow: 0 0 10px #a7e58c;
+}
+
+.orion-auth-shell .auth-layout {
+  display: grid;
+  width: min(1120px, calc(100% - 48px));
+  flex: 1;
+  align-items: center;
+  gap: clamp(40px, 9vw, 150px);
+  margin: 0 auto;
+  padding: 65px 0;
+  grid-template-columns: minmax(280px, 1fr) minmax(350px, 430px);
+}
+
+.orion-auth-shell.registration-page .auth-layout {
+  padding-bottom: 105px;
+}
+
+.orion-auth-shell .auth-intro {
+  max-width: 560px;
+}
+
+.orion-auth-shell .eyebrow,
+.orion-auth-shell .card-kicker {
+  color: #ffb84c;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+
+.orion-auth-shell .eyebrow {
+  margin: 0 0 22px;
+}
+
+.orion-auth-shell .auth-intro h1 {
+  margin: 0;
+  color: #fff8eb;
+  font-size: clamp(48px, 6vw, 80px);
+  font-weight: 600;
+  letter-spacing: -0.075em;
+  line-height: 0.96;
+}
+
+.orion-auth-shell .auth-intro h1 em {
+  color: #ffb84c;
+  font-style: normal;
+}
+
+.orion-auth-shell .intro-copy {
+  max-width: 390px;
+  margin: 28px 0 0;
+  color: rgba(255, 244, 225, 0.66);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.orion-auth-shell .intro-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 40px;
+  color: rgba(255, 244, 225, 0.65);
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+.orion-auth-shell .intro-meta svg {
+  color: #a7e58c;
+}
+
+.orion-auth-shell .auth-card {
+  border: 1px solid rgba(255, 244, 225, 0.24);
+  border-radius: 3px;
+  padding: 28px;
+  background: rgba(23, 19, 15, 0.57);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(13px);
+}
+
+.orion-auth-shell .auth-tabs {
+  display: flex;
+  gap: 22px;
+  border-bottom: 1px solid rgba(255, 244, 225, 0.15);
+}
+
+.orion-auth-shell .auth-tab {
+  position: relative;
+  border: 0;
+  padding: 0 0 15px;
+  background: transparent;
+  color: rgba(255, 244, 225, 0.45);
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.orion-auth-shell .auth-tab.active {
+  color: #fff8eb;
+}
+
+.orion-auth-shell .auth-tab.active::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: #ffb84c;
+  content: "";
+}
+
+.orion-auth-shell .auth-heading {
+  margin: 31px 0 26px;
+}
+
+.orion-auth-shell .card-kicker {
+  margin: 0 0 10px;
+  font-size: 9px;
+}
+
+.orion-auth-shell .auth-heading h2 {
+  margin: 0;
+  color: #fff8eb;
+  font-size: 25px;
+  letter-spacing: -0.04em;
+}
+
+.orion-auth-shell .auth-heading p:last-child {
+  margin: 8px 0 0;
+  color: rgba(255, 244, 225, 0.52);
+  font-size: 12px;
+}
+
+.orion-auth-shell .field {
+  display: block;
+  margin-top: 17px;
+  color: rgba(255, 244, 225, 0.63);
+  font-size: 11px;
+}
+
+.orion-auth-shell.registration-page .field {
+  margin-top: 13px;
+}
+
+.orion-auth-shell .input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  border: 1px solid rgba(255, 244, 225, 0.19);
+  padding: 0 13px;
+  color: rgba(255, 244, 225, 0.45);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.orion-auth-shell .input-wrap:focus-within {
+  border-color: rgba(255, 184, 76, 0.75);
+  background: rgba(255, 184, 76, 0.04);
+}
+
+.orion-auth-shell .input-wrap input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  padding: 13px 0;
+  background: transparent;
+  color: #fff8eb;
+  caret-color: #ffb84c;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.orion-auth-shell .input-wrap input:-webkit-autofill {
+  -webkit-text-fill-color: #fff8eb;
+  caret-color: #ffb84c;
+  box-shadow: 0 0 0 1000px #211a14 inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.orion-auth-shell .input-error {
+  border-color: rgba(255, 120, 90, 0.8) !important;
+}
+
+.orion-auth-shell .field-error {
+  display: flex;
+  min-height: 20px;
+  align-items: flex-start;
+  gap: 5px;
+  margin: 5px 0 0;
+  color: #ffad91;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.orion-auth-shell .field-error:empty {
+  visibility: hidden;
+}
+
+.orion-auth-shell .input-wrap input::placeholder {
+  color: rgba(255, 244, 225, 0.3);
+}
+
+.orion-auth-shell .password-toggle {
+  display: flex;
+  border: 0;
+  padding: 7px;
+  background: transparent;
+  color: rgba(255, 244, 225, 0.55);
+  cursor: pointer;
+}
+
+.orion-auth-shell .password-toggle:hover {
+  color: #ffb84c;
+}
+
+.orion-auth-shell .form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.orion-auth-shell .remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 244, 225, 0.5);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.orion-auth-shell .remember input {
+  accent-color: #ffb84c;
+}
+
+.orion-auth-shell .text-button,
+.orion-auth-shell .auth-switch a,
+.orion-auth-shell .auth-switch button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #ffb84c;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.orion-auth-shell .submit-button {
+  display: flex;
+  width: 100%;
+  min-height: 45px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 25px;
+  border: 0;
+  padding: 14px 16px;
+  background: #ffb84c;
+  color: #17130f;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.orion-auth-shell .submit-button:hover {
+  background: #ffd083;
+  transform: translateY(-1px);
+}
+
+.orion-auth-shell .submit-button:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+.orion-auth-shell .spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(23, 19, 15, 0.35);
+  border-top-color: #17130f;
+  border-radius: 50%;
+  animation: orion-auth-spin 0.7s linear infinite;
+}
+
+@keyframes orion-auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orion-auth-shell .form-message {
+  min-height: 15px;
+  margin: 12px 0 0;
+  color: #a7e58c;
+  font-size: 11px;
+  text-align: center;
+}
+
+.orion-auth-shell .form-message.error-message {
+  color: #ffad91;
+}
+
+.orion-auth-shell .terms {
+  margin-top: 19px;
+  line-height: 1.5;
+}
+
+.orion-auth-shell.registration-page .terms {
+  margin-top: 8px;
+}
+
+.orion-auth-shell .auth-switch {
+  margin: 26px 0 0;
+  color: rgba(255, 244, 225, 0.5);
+  text-align: center;
+  font-size: 11px;
+}
+
+.orion-auth-shell .auth-card :is(a, button, input):focus-visible {
+  outline: 2px solid #ffb84c;
+  outline-offset: 3px;
+}
+
+.orion-auth-shell .orion-footer {
+  padding-top: 18px;
+  padding-bottom: 24px;
+}
+
+@media (max-width: 760px) {
+  .orion-auth-shell .orion-header {
+    padding: 20px 24px;
+  }
+  .orion-auth-shell .header-status {
+    font-size: 8px;
+  }
+  .orion-auth-shell .auth-layout {
+    width: min(430px, calc(100% - 32px));
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding: 42px 0 36px;
+  }
+  .orion-auth-shell.registration-page .auth-layout {
+    padding-bottom: 80px;
+  }
+  .orion-auth-shell .auth-intro {
+    text-align: center;
+  }
+  .orion-auth-shell .auth-intro h1 {
+    font-size: clamp(43px, 14vw, 64px);
+  }
+  .orion-auth-shell .intro-copy {
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 14px;
+  }
+  .orion-auth-shell .intro-meta {
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .orion-auth-shell .auth-card {
+    padding: 23px 20px;
+  }
+  .orion-auth-shell .orion-footer {
+    padding: 18px 24px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .orion-auth-shell.registration-page .auth-layout {
+    width: min(620px, calc(100% - 48px));
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+  .orion-auth-shell.registration-page .auth-intro {
+    max-width: 620px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orion-auth-shell .submit-button,
+  .orion-auth-shell .input-wrap input {
+    transition: none;
+  }
+  .orion-auth-shell .spinner {
+    animation: none;
+  }
+}
+

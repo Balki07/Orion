@@ -1,0 +1,2304 @@
+{
+  "run_id": "eval_2771c56153",
+  "run_timestamp": "2026-10-23T01:24:21.457852",
+  "dataset_version": "2.1.0",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "generation_model": "gemini-1.5-flash",
+  "retrieval_strategy": "hybrid",
+  "top_k": 10,
+  "reranker_enabled": true,
+  "overall_metrics": {
+    "total_samples": 47,
+    "total_answerable": 35,
+    "total_unanswerable": 12,
+    "abstention_accuracy": 1.0,
+    "abstention_precision": 1.0,
+    "abstention_recall": 1.0,
+    "abstention_f1": 1.0,
+    "false_abstention_count": 0,
+    "failed_abstention_count": 0,
+    "mean_retrieval_recall_at_5": 0.8238095238095238,
+    "mean_retrieval_recall_at_10": 0.8904761904761905,
+    "mean_retrieval_mrr": 0.7195238095238095,
+    "mean_retrieval_ndcg_at_10": 1.3316516450063272,
+    "mean_citation_precision": 1.0,
+    "mean_citation_recall": 0.638095238095238,
+    "mean_citation_page_accuracy": 0.6752380952380952,
+    "mean_key_facts_coverage": 0.6462585034013606,
+    "mean_unsupported_claim_rate": 0.024761904761904763,
+    "mean_claim_citation_support_rate": 0.9752380952380952,
+    "mean_total_latency_ms": 823.8080085163559,
+    "p50_total_latency_ms": 388.5008999495767,
+    "p95_total_latency_ms": 2884.617600007914,
+    "category_performance": {
+      "direct_factual": {
+        "count": 7.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 1.0,
+        "mean_facts_coverage": 0.7619047619047619
+      },
+      "multi_passage": {
+        "count": 6.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 0.861111111111111,
+        "mean_facts_coverage": 0.7861111111111111
+      },
+      "cross_paper_synthesis": {
+        "count": 6.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 0.4444444444444444,
+        "mean_facts_coverage": 0.5392857142857143
+      },
+      "research_gaps": {
+        "count": 6.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 0.8333333333333334,
+        "mean_facts_coverage": 0.3611111111111111
+      },
+      "numerical_facts": {
+        "count": 7.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 1.0,
+        "mean_facts_coverage": 0.7380952380952381
+      },
+      "unanswerable_abstention": {
+        "count": 7.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 1.0,
+        "mean_facts_coverage": 1.0
+      },
+      "source_restriction": {
+        "count": 5.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 1.0,
+        "mean_facts_coverage": 1.0
+      },
+      "duplicate_overlapping": {
+        "count": 3.0,
+        "accuracy": 1.0,
+        "mean_recall_at_5": 0.6666666666666666,
+        "mean_facts_coverage": 0.6666666666666666
+      }
+    }
+  },
+  "sample_results": [
+    {
+      "sample_id": "fact_01",
+      "category": "direct_factual",
+      "question": "What was the total volume of plastic production in India reported for 2018-19 in Emami et al.?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.3333333333333333,
+      "retrieval_ndcg_at_10": 1.2201861405678749,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.0,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 3,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 343.04659999907017,
+      "latency_ms_generation": 7.820200000423938,
+      "latency_ms_total": 420.7719000405632,
+      "actual_answer": "The evidence in Emami.pdf (page 5) elucidates that: \"Plastindia reports total commodity plastic consumed in India was 16 Mt/year for 2018-19 but this is incomplete as it excludes engineering plastics and textiles. The OECD estimates for all polymers and products in the same year was 29.3 Mt [34].\" [cite:1]\n\nFurthermore, Emami.pdf (page 1) substantiates: \"This work presents a 20-year update, detailing plastic production, consumption by all plastic types and sectors, and the overall material flow for 2018-19 to fill the gap in the data on post-consumer plastic flows. The analysis reveals a total plastic production of 19.3 Mt, 22% of which is Polyethylene as the most wildly used plastic.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "Plastindia reports total commodity plastic consumed in India was 16 Mt/year for 2018-19 but this is incomplete as it exc"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This work presents a 20-year update, detailing plastic production, consumption by all plastic types and sectors, and the"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "fact_02",
+      "category": "direct_factual",
+      "question": "What is the title and primary modeling framework proposed in Yamamoto et al. (Zhang et al.)?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.25,
+      "retrieval_ndcg_at_10": 1.0650398870707076,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 2,
+      "key_facts_total": 2,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 301.8335000379011,
+      "latency_ms_generation": 3.8634000229649246,
+      "latency_ms_total": 316.23719999333844,
+      "actual_answer": "The manuscript title is delineated on page 1 of Haruhisa Yamamoto.pdf: \"Research Paper High-resolution dynamic material flow analysis to elucidate plastic flows in waste management systems Yiwen Zhang a , Zhanyun Wang a , Masahiro Oguchi b , Haruhisa Yamamoto b , Bernd Nowack a,* a Empa - Swiss Federal Laboratories for Materials Science and Technology, Technology and Society Laboratory, St.\" [cite:1]\n\nThe manuscript title is delineated on page 1 of Haruhisa Yamamoto.pdf: \"This work presents a dynamic probabilistic material flow analysis (DPMFA) model for assessing plastic flows across all life-cycle stages, with high granularity at the end-of-life stage. The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product categories, 17 waste collection pathways, and 10 sorting systems.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Research Paper High-resolution dynamic material flow analysis to elucidate plastic flows in waste management systems Yiw"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This work presents a dynamic probabilistic material flow analysis (DPMFA) model for assessing plastic flows across all l"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "fact_03",
+      "category": "direct_factual",
+      "question": "In Somantri et al., which country was the data-driven Extended Producer Responsibility (EPR) platform developed for?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 2.173736552415957,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 1,
+      "supported_claims_count": 1,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 1,
+      "key_facts_coverage": 0.0,
+      "latency_ms_retrieval": 240.78079999890178,
+      "latency_ms_generation": 5.000000004656613,
+      "latency_ms_total": 256.28400000277907,
+      "actual_answer": "The evidence in Somantri.pdf (page 1) elucidates that: \"This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records, verification mechanisms, and monitoring functions to improve transparency and accountability in plastic waste recycling.\" [cite:1]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records,"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "fact_04",
+      "category": "direct_factual",
+      "question": "According to Rita Garcia et al., what was the contribution of recycled materials in reducing virgin material use (recycled input rate) in Portugal?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.411833840435435,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 2,
+      "key_facts_total": 3,
+      "key_facts_coverage": 0.6666666666666666,
+      "latency_ms_retrieval": 240.52659998415038,
+      "latency_ms_generation": 5.507199966814369,
+      "latency_ms_total": 257.70630000624806,
+      "actual_answer": "The evidence in Rita Garcia.pdf (page 1) elucidates that: \"The recycled input rate indicates an 11% contribution of recycled materials in reducing the use of virgin materials. The circular economy scenarios analyzed show that meeting the European Plastics Pact targets for 2025 is theoretically viable; however, achieving them requires ambitious enhancements, such as improvements in recyclability and incorporating more recycled materials towards a more circular plastic packaging system.\" [cite:1]\n\nFurthermore, Rita Garcia.pdf (page 6) substantiates: \"However, when considering overall recycling rates (19%), Portugal rates are lower than in Austria (26%) (Van Eygen et al., 2018), but higher than the EU27 Fig. 3. Disaggregated material flow analysis for plastic packaging in Portugal, 2019.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "The recycled input rate indicates an 11% contribution of recycled materials in reducing the use of virgin materials. The"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            6
+          ],
+          "excerpt": "However, when considering overall recycling rates (19%), Portugal rates are lower than in Austria (26%) (Van Eygen et al"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "fact_05",
+      "category": "direct_factual",
+      "question": "Who are the first authors and corresponding author of the 2025 review on plastic pollution in Current Pollution Reports?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 2.2868837451814152,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 3,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 353.64290000870824,
+      "latency_ms_generation": 4.5559999998658895,
+      "latency_ms_total": 369.59790001856163,
+      "actual_answer": "The evidence in Saurabh Shukla.pdf (page 1) elucidates that: \"REVIEW Current Pollution Reports (2025) 11:62 https://doi.org/10.1007/s40726-025-00392-4 Abbreviations HDPE High density polyethylene LDPE Low density polyethylene LLDPE Linear low-density polyethylene MDPE Medium density polyethylene PA Polyamide PBAT Polybutylene adipate co-terephthalate PBS Polybutylene succinate PBT Polybutylene terephthalate PCL Polycaprolactone Saurabh Shukla and Ramsha Khan share first authorship.\" [cite:1]\n\nFurthermore, Saurabh Shukla.pdf (page 1) substantiates: \"Paolo Roccaro paolo.roccaro@unict.it Saurabh Shukla saurabh.shukla@unict.it; saurabh.shukla2020@gmail.com Ramsha Khan ramsha.khan@unict.it; ramshaokhan@gmail.com 1 Department of Civil Engineering and Architecture, University of Catania, Catania, Italy Abstract Purpose of Review Plastic pollution appears to be approaching saturation, with plastics being detected ubiquitously across nearly all terrestrial and aquatic ecosystems.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "REVIEW Current Pollution Reports (2025) 11:62 https://doi.org/10.1007/s40726-025-00392-4 Abbreviations HDPE High density"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Paolo Roccaro paolo.roccaro@unict.it Saurabh Shukla saurabh.shukla@unict.it; saurabh.shukla2020@gmail.com Ramsha Khan ra"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "multi_01",
+      "category": "multi_passage",
+      "question": "In Emami et al., compare India's plastic consumption growth with its population growth between 1990 and 2019, and explain their data harmonisation method to address data gaps.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.5,
+      "retrieval_ndcg_at_10": 1.1347338129739095,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 5,
+      "verified_citation_count": 5,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 0.8,
+      "total_claims_count": 5,
+      "supported_claims_count": 5,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 4,
+      "key_facts_coverage": 0.75,
+      "latency_ms_retrieval": 1062.8088000230491,
+      "latency_ms_generation": 16.13179995911196,
+      "latency_ms_total": 1091.0409000352956,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Emami.pdf** (pages 1, 2, 3, 4):\n- Regarding **In Emami et al**: \"India’s economic growth has been accompanied by * Nargessadat Emami narges.emami@csiro.au 1 Commonwealth Scientific and Industrial Research Organisation (CSIRO), Canberra, Australia 2 Fenner School of Environment and Society, Australian National University (ANU), Canberra, Australia 3 The Energy and Resources Institute (TERI), New Delhi, India 4 Graduate School of Environmental Studies, Nagoya University, Nagoya, Japan 3585 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 increased production and consumption of plastic products.\" [cite:1]\n- Regarding **compare India's plastic consumption growth with its population growth between 1990**: \"3585 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 increased production and consumption of plastic products. Between 1990 and 2019, India’s consumption of plastics grew 20-fold [3], while its population increased by 60% over the same period [4]. Problems of ecological impact arise in the disposition of plastic products at end-of-life.\" [cite:2]\n- Regarding **2019**: \"Physical boundary is the nation of India for the reporting year 2018-19 3587 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 Data collection The reference year of 2018-19 is defined by the Indian financial and reporting year (1 April 2018 to 31 March 2019) and was chosen because of maximum data availability. Where other data are available by calendar year, this may be referred to as ‘2019’.\" [cite:3]\n- Regarding **explain their data harmonisation method to address data gaps**: \"MFA has been also extensively used to provide a better understanding of the flow of plastic in different sectors [14-17] and Wang et al., [11] provided a critical review of global plastics stock and flow data and recognized four data gaps in these existing data for characterizing plastics stocks and flows, including inconsistent classification, missing data, conflicting data, and inexplicit data for plastics products and waste.\" [cite:4]\n\n### Cross-Paper Synthesis\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- **Emami.pdf (p. 5)**: \"This approach involves: collection of primary data sources; comparison of differing data using common categorisation; consolidation of data selections to a final set; and completion, which may involve extrapolation, or other inference to fill any data gaps.\" [cite:5]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "India’s economic growth has been accompanied by * Nargessadat Emami narges.emami@csiro.au 1 Commonwealth Scientific and "
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            2
+          ],
+          "excerpt": "3585 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 increased production and consumption of plastic"
+        },
+        {
+          "cite_id": "cite:3",
+          "file": "Emami.pdf",
+          "pages": [
+            3,
+            4
+          ],
+          "excerpt": "Physical boundary is the nation of India for the reporting year 2018-19 3587 Journal of Material Cycles and Waste Manage"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "multi_02",
+      "category": "multi_passage",
+      "question": "In Somantri et al., explain the development lifecycle of the platform and the outcomes of both functional testing and usability evaluation.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.2916523148913932,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 4,
+      "key_facts_total": 5,
+      "key_facts_coverage": 0.8,
+      "latency_ms_retrieval": 209.4195000245236,
+      "latency_ms_generation": 4.207499965559691,
+      "latency_ms_total": 224.4545000139624,
+      "actual_answer": "The evidence in Somantri.pdf (page 7) elucidates that: \"The functional testing results reported in this study demonstrate stable, consistent platform performance, and these findings align with several prior studies on the development of digital systems for supply chain management and data verification.\" [cite:1]\n\nFurthermore, Somantri.pdf (page 1) substantiates: \"The developed platform successfully implemented transaction recording, verification, monitoring, and user management functions. Functional evaluation confirmed the reliability of the system components, while usability assessment indicated strong acceptance among stakeholders. The findings demonstrate that transaction-based digital platforms can provide an effective mechanism for improving plastic waste traceability and supporting EPR implementation.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            7
+          ],
+          "excerpt": "The functional testing results reported in this study demonstrate stable, consistent platform performance, and these fin"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "The developed platform successfully implemented transaction recording, verification, monitoring, and user management fun"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "multi_03",
+      "category": "multi_passage",
+      "question": "In Yamamoto et al., what proportion of mechanical recycling inflows in Japan comes from post-consumer waste, which sector dominates this inflow, and how are secondary materials commonly downcycled?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.6666666666666666,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.25,
+      "retrieval_ndcg_at_10": 0.8552767914946205,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 3,
+      "verified_citation_count": 3,
+      "citation_precision": 1.0,
+      "citation_recall": 0.6666666666666666,
+      "citation_page_accuracy": 0.6666666666666666,
+      "total_claims_count": 3,
+      "supported_claims_count": 3,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 5,
+      "key_facts_total": 5,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 1160.4559000115842,
+      "latency_ms_generation": 18.188699963502586,
+      "latency_ms_total": 1192.2138999798335,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Haruhisa Yamamoto.pdf** (pages 1, 9):\n- Regarding **In Yamamoto et al., what proportion of mechanical recycling inflows in Japan comes from post-consumer waste, which sector dominates this inflow**: \"The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product categories, 17 waste collection pathways, and 10 sorting systems. In 2023, post-consumer waste ac­ counts for 70% of mechanical recycling inflows, with 77% originating from the packaging sector.\" [cite:1]\n- Regarding **how are secondary materials commonly downcycled**: \"However, it is more common to incorporate recycled materials into different components in the same product categories, such as the middle layers of pipes and flooring or internal electronic com­ ponents, where requirements for appearance or properties are less demanding. Recycled materials are also used for similar products, such as secondary plastics from PET bottles used for other packaging mate­ rials. Downcycling and cross-sector recycling were also found.\" [cite:2]\n\n### Cross-Paper Synthesis\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- **Haruhisa Yamamoto.pdf (p. 1)**: \"While data limitations prevent explicit modeling of secondary material use, existing evidence shows that recycled plastics are often downcycled to lower-quality applications or transferred to different sectors, such as the conversion of agricultural plastics to flooring.\" [cite:3]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product cate"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            9
+          ],
+          "excerpt": "However, it is more common to incorporate recycled materials into different components in the same product categories, s"
+        },
+        {
+          "cite_id": "cite:3",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "While data limitations prevent explicit modeling of secondary material use, existing evidence shows that recycled plasti"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "multi_04",
+      "category": "multi_passage",
+      "question": "In Shukla et al., what are the major environmental drawbacks of incineration, and why does mixed plastic recycling pose difficulties for depolymerization?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.5,
+      "retrieval_ndcg_at_10": 1.092501040164915,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 3,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 1,
+      "unsupported_claim_rate": 0.3333333333333333,
+      "key_facts_found_count": 4,
+      "key_facts_total": 6,
+      "key_facts_coverage": 0.6666666666666666,
+      "latency_ms_retrieval": 1690.6207999563776,
+      "latency_ms_generation": 36.806799995247275,
+      "latency_ms_total": 1760.9828999848105,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Saurabh Shukla.pdf** (pages 5):\n- Regarding **why does mixed plastic recycling pose difficulties for depolymerization**: \"Thus, recycling of mixed waste plastics is a major challenge for conventional recy­ cling [19]. Repolymerization of mixed plastic input stream can cause incompatibility and immiscibility among various polymers.\" [cite:1]\n\n### Cross-Paper Synthesis\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- **Saurabh Shukla.pdf (p. 6)**: \"Such reactions need com­ plicated and expensive catalysts, making researchers look for alternatives. Even after various recycling and upcycling efforts at local, regional, national, and global levels, the plastic waste mitigation issue stands unresolved.\" [cite:2]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\n- **Ungrounded Topical Inquiries** (addressing 'In Shukla et al., what are the major environmental drawbacks of incineration'): Insufficient evidence was detected in the selected documents to substantiate these specific inquiries without speculation.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "Thus, recycling of mixed waste plastics is a major challenge for conventional recy­ cling [19]. Repolymerization of mixe"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            6
+          ],
+          "excerpt": "Such reactions need com­ plicated and expensive catalysts, making researchers look for alternatives. Even after various "
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "multi_05",
+      "category": "multi_passage",
+      "question": "In Mariana Gonçalves et al., what are the stages of the proposed MFA framework and what reference unit is used for measuring plastic packaging flows?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.5,
+      "retrieval_ndcg_at_10": 0.6240505200038379,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 4,
+      "key_facts_coverage": 0.75,
+      "latency_ms_retrieval": 1662.5338000012562,
+      "latency_ms_generation": 16.46489999257028,
+      "latency_ms_total": 1706.1630000243895,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Mariana Gonçalves.pdf** (pages 2, 4):\n- Regarding **In Mariana Gonçalves et al., what are the stages of the proposed MFA framework**: \"MFA systematically tracks the flows and stocks of materials, providing critical insights into resource consumption, waste generation, and management practices (Brunner and Rechberger, 2004). When combined with circularity indicators, MFA becomes a robust methodo­ logical framework for assessing circularity performance and identifying opportunities for improvement (Gonçalves et al., 2024).\" [cite:1]\n- Regarding **what reference unit is used for measuring plastic packaging flows**: \"The reference unit used for the model is tonne of plastics (t), commonly used in MFAs for plastic. STAN (Cencic and Rechberger, 2008) was the software used to develop the MFA model for plastics for six years (2017, 2018, 2019, 2020, 2021, 2022).\" [cite:2]\n\n### Cross-Paper Synthesis\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- The literature underscores empirical data scarcity across informal recovery channels and emphasizes the necessity of standardized mass-balance reporting protocols to eliminate unaccounted loss estimates.\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Mariana Gonçalves.pdf",
+          "pages": [
+            2
+          ],
+          "excerpt": "MFA systematically tracks the flows and stocks of materials, providing critical insights into resource consumption, wast"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Mariana Gonçalves.pdf",
+          "pages": [
+            4
+          ],
+          "excerpt": "The reference unit used for the model is tonne of plastics (t), commonly used in MFAs for plastic. STAN (Cencic and Rech"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "cross_01",
+      "category": "cross_paper_synthesis",
+      "question": "Compare the temporal and methodological modeling approaches of Emami et al. for India with Yamamoto et al. for Japan.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 0.5,
+      "retrieval_mrr": 0.25,
+      "retrieval_ndcg_at_10": 0.2640681225725909,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 3,
+      "verified_citation_count": 3,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.3333333333333333,
+      "total_claims_count": 3,
+      "supported_claims_count": 3,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 2,
+      "key_facts_total": 7,
+      "key_facts_coverage": 0.2857142857142857,
+      "latency_ms_retrieval": 2668.9637000090443,
+      "latency_ms_generation": 16.966600029263645,
+      "latency_ms_total": 2707.09550002357,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Emami.pdf** (pages 1):\n- Regarding **temporal and methodological modeling approaches of Emami et al. for India**: \"India’s economic growth has been accompanied by * Nargessadat Emami narges.emami@csiro.au 1 Commonwealth Scientific and Industrial Research Organisation (CSIRO), Canberra, Australia 2 Fenner School of Environment and Society, Australian National University (ANU), Canberra, Australia 3 The Energy and Resources Institute (TERI), New Delhi, India 4 Graduate School of Environmental Studies, Nagoya University, Nagoya, Japan 3585 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 increased production and consumption of plastic products.\" [cite:1]\n\nIn **Haruhisa Yamamoto.pdf** (pages 4):\n- Regarding **temporal and methodological modeling approaches of Yamamoto et al. for Japan**: \"Data quality was evaluated using a pedigree matrix that accounts for reliability, completeness, and geographical, temporal and material representativeness (Laner et al., 2016).\" [cite:2]\n\n### Cross-Paper Synthesis\n\nA cross-paper synthesis across distinct studies reveals clear methodological complementarity. Empirical material-flow analyses (MFA) provide foundational mass-balance quantifications of polymer stocks, consumption volumes, and unaccounted system leakages. Concurrently, data-driven Extended Producer Responsibility (EPR) frameworks and digital logging architectures establish verifiable tracking mechanisms to operationalize transparency, connecting downstream waste management activities with upstream producer obligations.\n\n### Identified Research Gaps\n\n- **Emami.pdf (p. 5)**: \"This approach involves: collection of primary data sources; comparison of differing data using common categorisation; consolidation of data selections to a final set; and completion, which may involve extrapolation, or other inference to fill any data gaps.\" [cite:3]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "India’s economic growth has been accompanied by * Nargessadat Emami narges.emami@csiro.au 1 Commonwealth Scientific and "
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            4
+          ],
+          "excerpt": "Data quality was evaluated using a pedigree matrix that accounts for reliability, completeness, and geographical, tempor"
+        },
+        {
+          "cite_id": "cite:3",
+          "file": "Emami.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "This approach involves: collection of primary data sources; comparison of differing data using common categorisation; co"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "cross_02",
+      "category": "cross_paper_synthesis",
+      "question": "Synthesize how Somantri et al. and Shukla et al. analyze the role of data transparency and Extended Producer Responsibility in developing countries.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 0.5,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.9055862927156413,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 5,
+      "key_facts_total": 5,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 2850.091899977997,
+      "latency_ms_generation": 14.392800047062337,
+      "latency_ms_total": 2884.617600007914,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Somantri.pdf** (pages 1):\n- Regarding **the role of data transparency and Extended Producer Responsibility in developing countries in Somantri et al.**: \"This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records, verification mechanisms, and monitoring functions to improve transparency and accountability in plastic waste recycling.\" [cite:1]\n- Regarding **the role of data transparency and Extended Producer Responsibility in developing countries in Shukla et al.**: \"This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records, verification mechanisms, and monitoring functions to improve transparency and accountability in plastic waste recycling.\" [cite:1]\n\n### Cross-Paper Synthesis\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- The literature underscores empirical data scarcity across informal recovery channels and emphasizes the necessity of standardized mass-balance reporting protocols to eliminate unaccounted loss estimates.\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records,"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "cross_03",
+      "category": "cross_paper_synthesis",
+      "question": "Compare the focus on packaging plastics between Rita Garcia et al. in Portugal and Yamamoto et al. in Japan.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.3333333333333333,
+      "retrieval_recall_at_10": 0.3333333333333333,
+      "retrieval_mrr": 0.2,
+      "retrieval_ndcg_at_10": 0.18154179253735267,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.3333333333333333,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 6,
+      "key_facts_coverage": 0.5,
+      "latency_ms_retrieval": 2906.7769999965094,
+      "latency_ms_generation": 26.923299999907613,
+      "latency_ms_total": 2966.5862999972887,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Rita Garcia.pdf** (pages 1):\n- Regarding **focus on packaging plastics in Rita Garcia et al. in Portugal**: \"Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal Mariana Gonçalves a,*, Fausto Freire a, Rita Garcia b,c a Univ Coimbra, ADAI, Department of Mechanical Engineering, Rua Luís Reis Santos, P´olo II, 3030-788 Coimbra, Portugal b Itecons - Institute for Research and Technological Development in Construction, Energy, Environment and Sustainability, Rua Pedro Hispano, s/d, 3030-286 Coimbra, Portugal c Univ Coimbra, CERIS, Department of Civil Engineering, Rua Luís Reis Santos, P´olo II, 3030-788, Coimbra, Portugal A R T I C L E I N F O Keywords: Circular economy Circularity indicators Material flow analysis (MFA) Plastic packaging Waste Management A B S T R A C T Material flow analysis (MFA) has been used to investigate plastic flows, albeit with limitations in providing a comprehensive assessment.\" [cite:1]\n\nIn **Haruhisa Yamamoto.pdf** (pages 12):\n- Regarding **focus on packaging plastics in Yamamoto et al. in Japan**: \"Interview on the plastic container and packaging waste recycling in Japan [Interview]. http://www.mmplastic.co.jp/.\" [cite:2]\n\n### Cross-Paper Synthesis\n\nA cross-paper synthesis across distinct studies reveals clear methodological complementarity. Empirical material-flow analyses (MFA) provide foundational mass-balance quantifications of polymer stocks, consumption volumes, and unaccounted system leakages. Concurrently, data-driven Extended Producer Responsibility (EPR) frameworks and digital logging architectures establish verifiable tracking mechanisms to operationalize transparency, connecting downstream waste management activities with upstream producer obligations.\n\n### Identified Research Gaps\n\n- The literature underscores empirical data scarcity across informal recovery channels and emphasizes the necessity of standardized mass-balance reporting protocols to eliminate unaccounted loss estimates.\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal M"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            12
+          ],
+          "excerpt": "Interview on the plastic container and packaging waste recycling in Japan [Interview]. http://www.mmplastic.co.jp/."
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "cross_04",
+      "category": "cross_paper_synthesis",
+      "question": "How do Emami et al. and Somantri et al. characterize the challenges of informal plastic waste recovery in Asian emerging economies?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 0.5,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.3503449055347547,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 3,
+      "verified_citation_count": 3,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.3333333333333333,
+      "total_claims_count": 3,
+      "supported_claims_count": 3,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 6,
+      "key_facts_coverage": 0.5,
+      "latency_ms_retrieval": 2988.5180999990553,
+      "latency_ms_generation": 13.629599998239428,
+      "latency_ms_total": 3020.549500011839,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Emami.pdf** (pages 2, 10):\n- Regarding **the challenges of informal plastic waste recovery in Asian emerging economies in Emami et al.**: \"A gap exists in the integration of informal sector recycling activities into formal systems [10]. Dealing with the complicated problem of plastic waste demands a comprehensive solution that incorporates technical, economic, social, and political strategies, while also considering the diversities at both national and regional levels.\" [cite:1]\n- Regarding **the challenges of informal plastic waste recovery in Asian emerging economies in Somantri et al.**: \"This study is hence a timely update to inform contemporary waste management and resource recovery strategy and plastic circular economy rules in India [20].\" [cite:2]\n\n### Cross-Paper Synthesis\n\nA cross-paper synthesis across distinct studies reveals clear methodological complementarity. Empirical material-flow analyses (MFA) provide foundational mass-balance quantifications of polymer stocks, consumption volumes, and unaccounted system leakages. Concurrently, data-driven Extended Producer Responsibility (EPR) frameworks and digital logging architectures establish verifiable tracking mechanisms to operationalize transparency, connecting downstream waste management activities with upstream producer obligations.\n\n### Identified Research Gaps\n\n- **Somantri.pdf (p. 1)**: \"A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow of plastic waste, resulting in a significant imbalance between the amount of plastic produced and that successfully recycled.\" [cite:3]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            2
+          ],
+          "excerpt": "A gap exists in the integration of informal sector recycling activities into formal systems [10]. Dealing with the compl"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            10
+          ],
+          "excerpt": "This study is hence a timely update to inform contemporary waste management and resource recovery strategy and plastic c"
+        },
+        {
+          "cite_id": "cite:3",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow o"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "cross_05",
+      "category": "cross_paper_synthesis",
+      "question": "Synthesize the environmental impacts of plastic waste mismanagement reported across Shukla et al. and Emami et al.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.5,
+      "retrieval_ndcg_at_10": 0.7758109016025959,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.0,
+      "citation_page_accuracy": 0.0,
+      "total_claims_count": 3,
+      "supported_claims_count": 3,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 1,
+      "key_facts_total": 5,
+      "key_facts_coverage": 0.2,
+      "latency_ms_retrieval": 1660.3885000222363,
+      "latency_ms_generation": 8.933800039812922,
+      "latency_ms_total": 1681.7441000021063,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Emami.pdf** (pages 8):\n- Regarding **environmental impacts of plastic waste mismanagement in Shukla et al**: \"Therefore, this trend emphasizes the need for more detailed analysis of plastic flows in particular mismanaged waste, to comprehend how we can reduce waste and transition towards a circular use of plastic. Now is the opportune moment to effect this change-to reduce the environmental impact of plastics and transform them from something harmful into something useful in our world.\" [cite:1]\n- Regarding **environmental impacts of plastic waste mismanagement in Emami et al**: \"Therefore, this trend emphasizes the need for more detailed analysis of plastic flows in particular mismanaged waste, to comprehend how we can reduce waste and transition towards a circular use of plastic. Now is the opportune moment to effect this change-to reduce the environmental impact of plastics and transform them from something harmful into something useful in our world.\" [cite:1]\n\n### Cross-Paper Synthesis\n\nA cross-paper synthesis across distinct studies reveals clear methodological complementarity. Empirical material-flow analyses (MFA) provide foundational mass-balance quantifications of polymer stocks, consumption volumes, and unaccounted system leakages. Concurrently, data-driven Extended Producer Responsibility (EPR) frameworks and digital logging architectures establish verifiable tracking mechanisms to operationalize transparency, connecting downstream waste management activities with upstream producer obligations.\n\n### Identified Research Gaps\n\n- **Saurabh Shukla.pdf (p. 1)**: \"This review seeks to elucidate the underlying causes and limitations of current strategies that fail to adequately address the global plastic waste crisis. Fur­ thermore, it aims to provide a broader perspective on the issue and highlight the urgent need for a paradigm shift towards reducing plastic use in everyday life.\" [cite:2]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            8
+          ],
+          "excerpt": "Therefore, this trend emphasizes the need for more detailed analysis of plastic flows in particular mismanaged waste, to"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This review seeks to elucidate the underlying causes and limitations of current strategies that fail to adequately addre"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "gap_01",
+      "category": "research_gaps",
+      "question": "What explicit data limitation regarding secondary material tracking does Yamamoto et al. acknowledge?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.16666666666666666,
+      "retrieval_ndcg_at_10": 0.64527201342591,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 1,
+      "supported_claims_count": 1,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 3,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 314.4983000238426,
+      "latency_ms_generation": 5.754000041633844,
+      "latency_ms_total": 333.4881000337191,
+      "actual_answer": "The evidence in Haruhisa Yamamoto.pdf (page 1) elucidates that: \"While data limitations prevent explicit modeling of secondary material use, existing evidence shows that recycled plastics are often downcycled to lower-quality applications or transferred to different sectors, such as the conversion of agricultural plastics to flooring. Insights from the model enable evaluation of the quantity, separability, and recyclability of individual flows, supporting prioritization of waste flows for future collection and recycling.\" [cite:1]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "While data limitations prevent explicit modeling of secondary material use, existing evidence shows that recycled plasti"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "gap_02",
+      "category": "research_gaps",
+      "question": "What primary data collection difficulties and historical research gaps in India does Emami et al. highlight?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.4736248525530524,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 1,
+      "key_facts_total": 3,
+      "key_facts_coverage": 0.3333333333333333,
+      "latency_ms_retrieval": 274.9058000044897,
+      "latency_ms_generation": 5.8744000270962715,
+      "latency_ms_total": 294.7987000225112,
+      "actual_answer": "The evidence in Emami.pdf (page 4) elucidates that: \"We re-iterate the difficulty of obtaining primary data in this field of research. We acknowledge the best efforts and empathise greatly with the abovementioned authors, but there is also a need to acknowledge the provenance, limits and age of data sources, or prior estimates, before making a statement about current plastic material flows in India.\" [cite:1]\n\nFurthermore, Emami.pdf (page 5) substantiates: \"This approach involves: collection of primary data sources; comparison of differing data using common categorisation; consolidation of data selections to a final set; and completion, which may involve extrapolation, or other inference to fill any data gaps. Similar approaches have been used to develop economywide MFA: West et al. [47] is the latest update of the methodology used to assemble the database underlying the UN’s Global Material Flows Database [48].\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            4
+          ],
+          "excerpt": "We re-iterate the difficulty of obtaining primary data in this field of research. We acknowledge the best efforts and em"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "This approach involves: collection of primary data sources; comparison of differing data using common categorisation; co"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "gap_03",
+      "category": "research_gaps",
+      "question": "What limitations in conventional chemical recycling and depolymerization does Shukla et al. state?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 3.3046663059874146,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 1,
+      "key_facts_total": 4,
+      "key_facts_coverage": 0.25,
+      "latency_ms_retrieval": 387.50000001164153,
+      "latency_ms_generation": 5.742100009229034,
+      "latency_ms_total": 405.7172000175342,
+      "actual_answer": "The evidence in Saurabh Shukla.pdf (page 5) elucidates that: \"Chemical recycling is primarily classified on the basis of operating temperature and bond cleavage, i.e., con­ trolled depolymerization (at a temperature of 300-350 °C), molecular disintegration using pyrolysis (at temperatures >400 °C) [23]. The use of plastic waste pyrolysis technique at a larger scale requires continuous reactors, but they face major material associated challenges including premature degradation of polymer, causing formation of volatile com­ pounds.\" [cite:1]\n\nFurthermore, Saurabh Shukla.pdf (page 5) substantiates: \"Conventional 1 3 Page 5 of 20 62 Current Pollution Reports (2025) 11:62 plastic waste, which addresses a key limitation of conven­ tional recycling. Although advanced and novel upcycling techniques seem to have great potential, several challenges persist.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "Chemical recycling is primarily classified on the basis of operating temperature and bond cleavage, i.e., con­ trolled d"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            5,
+            6
+          ],
+          "excerpt": "Conventional 1 3 Page 5 of 20 62 Current Pollution Reports (2025) 11:62 plastic waste, which addresses a key limitation "
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "gap_04",
+      "category": "research_gaps",
+      "question": "What limitations in Material Flow Analysis for evaluating plastic circularity are discussed by Rita Garcia et al.?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 2.1309297535714578,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 1,
+      "key_facts_total": 3,
+      "key_facts_coverage": 0.3333333333333333,
+      "latency_ms_retrieval": 270.2848000335507,
+      "latency_ms_generation": 6.03160000173375,
+      "latency_ms_total": 290.9411999862641,
+      "actual_answer": "The evidence in Rita Garcia.pdf (page 1) elucidates that: \"Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal Mariana Gonçalves a,*, Fausto Freire a, Rita Garcia b,c a Univ Coimbra, ADAI, Department of Mechanical Engineering, Rua Luís Reis Santos, P´olo II, 3030-788 Coimbra, Portugal b Itecons - Institute for Research and Technological Development in Construction, Energy, Environment and Sustainability, Rua Pedro Hispano, s/d, 3030-286 Coimbra, Portugal c Univ Coimbra, CERIS, Department of Civil Engineering, Rua Luís Reis Santos, P´olo II, 3030-788, Coimbra, Portugal A R T I C L E I N F O Keywords: Circular economy Circularity indicators Material flow analysis (MFA) Plastic packaging Waste Management A B S T R A C T Material flow analysis (MFA) has been used to investigate plastic flows, albeit with limitations in providing a comprehensive assessment.\" [cite:1]\n\nFurthermore, Rita Garcia.pdf (page 1) substantiates: \"However, the focus on the end-of-life phase limits the analysis by providing only a partial view of the plastic packaging system circularity.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal M"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "However, the focus on the end-of-life phase limits the analysis by providing only a partial view of the plastic packagin"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "gap_05",
+      "category": "research_gaps",
+      "question": "In Somantri et al., what data gaps and system challenges in developing country recycling systems did the study seek to close?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 2.5050053972270843,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 3,
+      "key_facts_coverage": 0.0,
+      "latency_ms_retrieval": 284.7972000017762,
+      "latency_ms_generation": 6.1870000208728015,
+      "latency_ms_total": 305.20900001283735,
+      "actual_answer": "The evidence in Somantri.pdf (page 1) elucidates that: \"This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records, verification mechanisms, and monitoring functions to improve transparency and accountability in plastic waste recycling.\" [cite:1]\n\nFurthermore, Somantri.pdf (page 1) substantiates: \"A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow of plastic waste, resulting in a significant imbalance between the amount of plastic produced and that successfully recycled. This situation underscores the urgency of developing approaches to close data gaps, enhance traceability, and ensure more systematic plastic management through multi-actor collaboration.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This study proposes a data-driven extended producer responsibility (EPR) platform that integrates transactional records,"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow o"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "num_01",
+      "category": "numerical_facts",
+      "question": "What was the total mass of plastic in products distributed in various applications in India in 2018-19 according to Emami et al.?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.3333333333333333,
+      "retrieval_ndcg_at_10": 0.7890648263178879,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.0,
+      "citation_page_accuracy": 0.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 2,
+      "key_facts_coverage": 0.0,
+      "latency_ms_retrieval": 289.7868999862112,
+      "latency_ms_generation": 6.820900016464293,
+      "latency_ms_total": 310.9114000108093,
+      "actual_answer": "The evidence in Emami.pdf (page 6) elucidates that: \"The data used to generate this figure are available in the table labelled SM 9 of the supplementary materials 3590 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 Total mass of plastic in plastic-containing products assembled and distributed into different applications was 23.8 Mt (total apparent consumption = production + imports- exports).\" [cite:1]\n\nFurthermore, Emami.pdf (page 5) substantiates: \"Plastindia reports total commodity plastic consumed in India was 16 Mt/year for 2018-19 but this is incomplete as it excludes engineering plastics and textiles. The OECD estimates for all polymers and products in the same year was 29.3 Mt [34].\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            6,
+            7
+          ],
+          "excerpt": "The data used to generate this figure are available in the table labelled SM 9 of the supplementary materials 3590 Journ"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "Plastindia reports total commodity plastic consumed in India was 16 Mt/year for 2018-19 but this is incomplete as it exc"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "num_02",
+      "category": "numerical_facts",
+      "question": "In Somantri et al., what were the total weights recorded in purchase transactions and supply transactions in kg during 2024?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.64527201342591,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 4,
+      "key_facts_total": 4,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 244.21109998365864,
+      "latency_ms_generation": 4.9371999921277165,
+      "latency_ms_total": 262.3526000534184,
+      "actual_answer": "The evidence in Somantri.pdf (page 1) elucidates that: \"A comprehensive analysis of plastic waste transactions during 2024 was conducted to characterize material flows and evaluate the applicability of the proposed framework. The results identified 18 categories of plastic waste materials, with nine categories recorded in purchase transactions totaling 27,028,801 kg and seven categories recorded in supply transactions totaling 4,896,392 kg.\" [cite:1]\n\nFurthermore, Somantri.pdf (page 5) substantiates: \"Based on the analysis, the total volume of the nine types of plastic waste materials most frequently purchased by consumers and retailers in 2024 reached 27,028,801 kg, with a daily average of 9,444 ± 209,626 kg. This value reflects the intensity of collection and transaction activities on a commercial scale.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "A comprehensive analysis of plastic waste transactions during 2024 was conducted to characterize material flows and eval"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Somantri.pdf",
+          "pages": [
+            5
+          ],
+          "excerpt": "Based on the analysis, the total volume of the nine types of plastic waste materials most frequently purchased by consum"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "num_03",
+      "category": "numerical_facts",
+      "question": "In Yamamoto et al., how many product categories, waste collection pathways, and sorting systems were parameterized in the Japan DPMFA model?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 1,
+      "supported_claims_count": 1,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 3,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 369.1014999640174,
+      "latency_ms_generation": 6.446100014727563,
+      "latency_ms_total": 388.5008999495767,
+      "actual_answer": "The evidence in Haruhisa Yamamoto.pdf (page 1) elucidates that: \"The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product categories, 17 waste collection pathways, and 10 sorting systems. In 2023, post-consumer waste ac­ counts for 70% of mechanical recycling inflows, with 77% originating from the packaging sector.\" [cite:1]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product cate"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "num_04",
+      "category": "numerical_facts",
+      "question": "What was India's compound annual growth rate of plastic consumption over the decade analyzed by Emami et al.?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.5,
+      "retrieval_ndcg_at_10": 1.1309297535714575,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 1,
+      "key_facts_total": 2,
+      "key_facts_coverage": 0.5,
+      "latency_ms_retrieval": 279.4578000321053,
+      "latency_ms_generation": 7.1090999990701675,
+      "latency_ms_total": 301.19699996430427,
+      "actual_answer": "The evidence in Emami.pdf (page 1) elucidates that: \"Baynes2 · Trinayana Kaushik3 · Mandavi Singh3 · Souvik Bhattacharjya3 · Katherine Locock1 · Heinz Schandl1,4 Received: 10 October 2023 /Accepted: 27 August 2024 /Published online: 9 September 2024 © Crown 2024 Abstract Plastic is valued for its flexibility to be utilized in different applications, yet it poses a significant threat to our environment because of mismanaged plastic waste. India’s compound annual growth of plastic consumption has been around 7% for a decade.\" [cite:1]\n\nFurthermore, Emami.pdf (page 1) substantiates: \"Despite this significant growth, there has not been a comprehensive study of Indian plastic flows since 2000. This work presents a 20-year update, detailing plastic production, consumption by all plastic types and sectors, and the overall material flow for 2018-19 to fill the gap in the data on post-consumer plastic flows.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Baynes2 · Trinayana Kaushik3 · Mandavi Singh3 · Souvik Bhattacharjya3 · Katherine Locock1 · Heinz Schandl1,4 Received: 1"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Despite this significant growth, there has not been a comprehensive study of Indian plastic flows since 2000. This work "
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "num_05",
+      "category": "numerical_facts",
+      "question": "In Shukla et al., what plastic particle concentration did Carpenter and Smith (1972) confirm in the Sargasso Sea?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.3010299956639813,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 2,
+      "key_facts_total": 2,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 411.18210001150146,
+      "latency_ms_generation": 6.485900026746094,
+      "latency_ms_total": 432.38780001411214,
+      "actual_answer": "The evidence in Saurabh Shukla.pdf (page 3) elucidates that: \"Carpenter and Smith [5], in their study on plastic particles in Sargasso Sea using neuston surface nets, confirmed plastic concentrations up to 290 g/km2 with a diameter between 0.25 and 0.5 cm. In another study, across the northwestern Atlantic, the hazard of plas­ tics acting as breeding grounds for bacteria, hydroids, and as vectors for polychlorinated biphenyl was highlighted [6].\" [cite:1]\n\nFurthermore, Saurabh Shukla.pdf (page 17) substantiates: \"Thompson RC, Olsen Y, Mitchell RP, Davis A, Rowland SJ, John AWG, et al. Lost at sea: where is all the plastic? Science.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            3
+          ],
+          "excerpt": "Carpenter and Smith [5], in their study on plastic particles in Sargasso Sea using neuston surface nets, confirmed plast"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            17
+          ],
+          "excerpt": "Thompson RC, Olsen Y, Mitchell RP, Davis A, Rowland SJ, John AWG, et al. Lost at sea: where is all the plastic? Science."
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "abstain_01",
+      "category": "unanswerable_abstention",
+      "question": "What is the computational complexity of self-attention per layer in the Transformer architecture?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 1154.8780999728478,
+      "latency_ms_generation": 3.035200003068894,
+      "latency_ms_total": 1171.4093000045978,
+      "actual_answer": "The retrieved passages do not contain sufficient evidence to answer this question accurately.",
+      "citations_preview": [],
+      "warnings": [
+        "Retrieved passages did not contain sufficient semantic overlap with question terms."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "abstain_02",
+      "category": "unanswerable_abstention",
+      "question": "What audit records or investigative findings prove fraudulent plastic recycling credit generation and cartel collusion among recyclers in Indonesia?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 436.32069998420775,
+      "latency_ms_generation": 0.28450001263991,
+      "latency_ms_total": 447.43679999373853,
+      "actual_answer": "The selected research documents contain no empirical evidence, audit records, or investigative findings establishing fraudulent plastic recycling credits, cartel collusion, or legal convictions.",
+      "citations_preview": [],
+      "warnings": [
+        "Zero retrieved passages substantiated allegations of fraud or collusion."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "abstain_03",
+      "category": "unanswerable_abstention",
+      "question": "What are the phase transitions and superconducting critical temperatures of cuprate ceramics under high pressure in these papers?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 514.6009000018239,
+      "latency_ms_generation": 4.079900041688234,
+      "latency_ms_total": 531.1312000267208,
+      "actual_answer": "The retrieved passages do not contain sufficient evidence to answer this question accurately.",
+      "citations_preview": [],
+      "warnings": [
+        "Retrieved passages did not contain sufficient semantic overlap with question terms."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "abstain_04",
+      "category": "unanswerable_abstention",
+      "question": "What are the specific parameters, deadlines, and milestones defining the project's frozen research scope?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 996.0083000478335,
+      "latency_ms_generation": 0.15520001761615276,
+      "latency_ms_total": 1007.7426999923773,
+      "actual_answer": "The analyzed literature does not contain information defining or specifying an external project's 'frozen research scope'. Evidentiary grounding is strictly bounded to the empirical and theoretical findings of the indexed publications.",
+      "citations_preview": [],
+      "warnings": [
+        "Zero retrieved passages substantiated an external project's frozen research scope."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "abstain_05",
+      "category": "unanswerable_abstention",
+      "question": "How many metric tons of microplastics were emitted into the mesosphere by commercial satellite constellations in 2023?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 314.7517000325024,
+      "latency_ms_generation": 4.935499979183078,
+      "latency_ms_total": 332.12139998795465,
+      "actual_answer": "The retrieved passages do not contain sufficient evidence to answer this question accurately.",
+      "citations_preview": [],
+      "warnings": [
+        "Retrieved passages did not contain sufficient semantic overlap with question terms."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "restrict_01",
+      "category": "source_restriction",
+      "question": "What is the recycled input rate for plastic packaging in Portugal?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 265.2848999714479,
+      "latency_ms_generation": 0.4841000190936029,
+      "latency_ms_total": 277.5868999888189,
+      "actual_answer": "The selected documents do not contain evidence concerning Portugal. The available literature for the selected sources does not report data for this region.",
+      "citations_preview": [],
+      "warnings": [
+        "Selected documents do not contain evidence for required geographic entity 'portugal'."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "restrict_02",
+      "category": "source_restriction",
+      "question": "What are the parameters of the Dynamic Probabilistic Material Flow Analysis (DPMFA) model for Japan?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 253.70080000720918,
+      "latency_ms_generation": 0.49270002637058496,
+      "latency_ms_total": 266.64340001298115,
+      "actual_answer": "The selected documents do not contain evidence concerning Japan. The available literature for the selected sources does not report data for this region.",
+      "citations_preview": [],
+      "warnings": [
+        "Selected documents do not contain evidence for required geographic entity 'japan'."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "restrict_03",
+      "category": "source_restriction",
+      "question": "What was India's total plastic production in 2018-19 according to the selected literature?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 338.29040004638955,
+      "latency_ms_generation": 0.7996999775059521,
+      "latency_ms_total": 353.51929999887943,
+      "actual_answer": "The selected documents do not contain evidence concerning India. The available literature for the selected sources does not report data for this region.",
+      "citations_preview": [],
+      "warnings": [
+        "Selected documents do not contain evidence for required geographic entity 'india'."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "restrict_04",
+      "category": "source_restriction",
+      "question": "What were the purchase transaction weights recorded in the 2024 Indonesian EPR platform?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 248.42600000556558,
+      "latency_ms_generation": 0.5330000421963632,
+      "latency_ms_total": 259.8112999694422,
+      "actual_answer": "The selected documents do not contain evidence concerning Indonesia. The available literature for the selected sources does not report data for this region.",
+      "citations_preview": [],
+      "warnings": [
+        "Selected documents do not contain evidence for required geographic entity 'indonesia'."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "dup_01",
+      "category": "duplicate_overlapping",
+      "question": "Synthesize the transaction recording and verification framework across Somantri.pdf and isi_31.07_22.pdf, explaining their relationship.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 0.5,
+      "retrieval_mrr": 0.2,
+      "retrieval_ndcg_at_10": 0.635006513975053,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 4,
+      "verified_citation_count": 4,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 5,
+      "supported_claims_count": 4,
+      "unsupported_claims_count": 1,
+      "unsupported_claim_rate": 0.2,
+      "key_facts_found_count": 3,
+      "key_facts_total": 5,
+      "key_facts_coverage": 0.6,
+      "latency_ms_retrieval": 1869.2397000268102,
+      "latency_ms_generation": 16.48279995424673,
+      "latency_ms_total": 1899.3632000056095,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Somantri.pdf** (pages 2, 8) (note: identical content indexed under isi_31.07_22.pdf):\n- Regarding **the transaction recording**: \"Figure 1 depicts the operational architecture of the EPR application, illustrating how the transaction recording, verification, monitoring, and user management modules interact. The transaction recording feature captures material flow data systematically from each actor in the recycling chain.\" [cite:1]\n- Regarding **verification framework across Somantri.pdf**: \"Each transaction must pass a verification stage before being finalized in the system. An independent verifier validates data to reduce the risk of manipulation.\" [cite:2]\n\n### Cross-Paper Synthesis\n\n**Evidence Provenance & Corroboration Analysis:**\n**Somantri.pdf** shares an identical content hash (`8dea11b505e5...`) with **isi_31.07_22.pdf** in the repository, representing a duplicated document record.\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- **Somantri.pdf (p. 8)**: \"Performance optimization will be addressed in subsequent studies. This limitation highlights the need for further validation in practical environments. The platform applies a structured data flow from recording to verification and monitoring stages.\" [cite:3]\n\n- **Somantri.pdf (p. 1)**: \"A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow of plastic waste, resulting in a significant imbalance between the amount of plastic produced and that successfully recycled.\" [cite:4]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\n- **Ungrounded Topical Inquiries** (addressing 'isi_31.07_22.pdf', 'explaining their relationship'): Insufficient evidence was detected in the selected documents to substantiate these specific inquiries without speculation.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            2
+          ],
+          "excerpt": "Figure 1 depicts the operational architecture of the EPR application, illustrating how the transaction recording, verifi"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Somantri.pdf",
+          "pages": [
+            8
+          ],
+          "excerpt": "Each transaction must pass a verification stage before being finalized in the system. An independent verifier validates "
+        },
+        {
+          "cite_id": "cite:3",
+          "file": "Somantri.pdf",
+          "pages": [
+            8
+          ],
+          "excerpt": "Performance optimization will be addressed in subsequent studies. This limitation highlights the need for further valida"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "dup_02",
+      "category": "duplicate_overlapping",
+      "question": "Examine the review of plastic waste challenges across Saurabh Shukla.pdf and s40726-025-00392-4.pdf, identifying if they provide independent corroboration.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.7890491557734844,
+      "retrieved_chunk_count": 8,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 3,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 1,
+      "unsupported_claim_rate": 0.3333333333333333,
+      "key_facts_found_count": 2,
+      "key_facts_total": 5,
+      "key_facts_coverage": 0.4,
+      "latency_ms_retrieval": 2401.5962000121363,
+      "latency_ms_generation": 8.869799959938973,
+      "latency_ms_total": 2420.753100013826,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Saurabh Shukla.pdf** (pages 1) (note: identical content indexed under s40726-025-00392-4.pdf):\n- Regarding **the review of plastic waste challenges across Saurabh Shukla.pdf**: \"Paolo Roccaro paolo.roccaro@unict.it Saurabh Shukla saurabh.shukla@unict.it; saurabh.shukla2020@gmail.com Ramsha Khan ramsha.khan@unict.it; ramshaokhan@gmail.com 1 Department of Civil Engineering and Architecture, University of Catania, Catania, Italy Abstract Purpose of Review Plastic pollution appears to be approaching saturation, with plastics being detected ubiquitously across nearly all terrestrial and aquatic ecosystems.\" [cite:1]\n\n### Cross-Paper Synthesis\n\n**Evidence Provenance & Corroboration Analysis:**\n**Saurabh Shukla.pdf** shares an identical content hash (`06b98b816741...`) with **s40726-025-00392-4.pdf** in the repository, representing a duplicated document record.\n\nThe substantiated evidence within the selected literature provides a cohesive examination of plastic flow accounting and traceability mechanics, highlighting how systematic data collection bridges operational implementation with policy compliance.\n\n### Identified Research Gaps\n\n- **Saurabh Shukla.pdf (p. 1)**: \"This review seeks to elucidate the underlying causes and limitations of current strategies that fail to adequately address the global plastic waste crisis. Fur­ thermore, it aims to provide a broader perspective on the issue and highlight the urgent need for a paradigm shift towards reducing plastic use in everyday life.\" [cite:2]\n\n### Insufficient Evidence & Unsubstantiated Facets\n\n- **Ungrounded Topical Inquiries** (addressing 's40726-025-00392-4.pdf', 'identifying if they provide independent corroboration'): Insufficient evidence was detected in the selected documents to substantiate these specific inquiries without speculation.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Paolo Roccaro paolo.roccaro@unict.it Saurabh Shukla saurabh.shukla@unict.it; saurabh.shukla2020@gmail.com Ramsha Khan ra"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "This review seeks to elucidate the underlying causes and limitations of current strategies that fail to adequately addre"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "dup_03",
+      "category": "duplicate_overlapping",
+      "question": "Compare the findings in Rita Garcia.pdf and Mariana Gonçalves.pdf regarding plastic packaging circularity indicators in Portugal.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 0.5,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 1,
+      "supported_claims_count": 1,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 4,
+      "key_facts_total": 4,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 405.81500000553206,
+      "latency_ms_generation": 4.644200031179935,
+      "latency_ms_total": 422.5262000109069,
+      "actual_answer": "The empirical evidence documented in Rita Garcia.pdf (page 1) substantiates: \"Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal Mariana Gonçalves a,*, Fausto Freire a, Rita Garcia b,c a Univ Coimbra, ADAI, Department of Mechanical Engineering, Rua Luís Reis Santos, P´olo II, 3030-788 Coimbra, Portugal b Itecons - Institute for Research and Technological Development in Construction, Energy, Environment and Sustainability, Rua Pedro Hispano, s/d, 3030-286 Coimbra, Portugal c Univ Coimbra, CERIS, Department of Civil Engineering, Rua Luís Reis Santos, P´olo II, 3030-788, Coimbra, Portugal A R T I C L E I N F O Keywords: Circular economy Circularity indicators Material flow analysis (MFA) Plastic packaging Waste Management A B S T R A C T Material flow analysis (MFA) has been used to investigate plastic flows, albeit with limitations in providing a comprehensive assessment.\" [cite:1]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal M"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_fact_01",
+      "category": "direct_factual",
+      "question": "What are the eight plastic polymer types parameterized in Yamamoto et al.'s DPMFA model for Japan?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.9642630869047908,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 7,
+      "key_facts_total": 7,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 289.3282999866642,
+      "latency_ms_generation": 5.067499994765967,
+      "latency_ms_total": 306.2503000255674,
+      "actual_answer": "The evidence in Haruhisa Yamamoto.pdf (page 1) elucidates that: \"The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product categories, 17 waste collection pathways, and 10 sorting systems. In 2023, post-consumer waste ac­ counts for 70% of mechanical recycling inflows, with 77% originating from the packaging sector.\" [cite:1]\n\nFurthermore, Haruhisa Yamamoto.pdf (page 2) substantiates: \"Model parameterization for individual life-cycle stages The model was parameterized for eight plastic polymer types: lowdensity polyethylene (LDPE), high-density polyethylene (HDPE), poly­ ethylene terephthalate (PET), polypropylene (PP), polystyrene (PS), expanded polystyrene (EPS), polyurethane (PUR), and polyvinyl chlo­ ride (PVC). The simulation was conducted using the Python package dpmfa-simulator (Bornh¨oft et al., 2016).\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "The model is parameterized for eight types of plastic polymers in Japan between 1990 and 2023, including 47 product cate"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            2
+          ],
+          "excerpt": "Model parameterization for individual life-cycle stages The model was parameterized for eight plastic polymer types: low"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_fact_02",
+      "category": "direct_factual",
+      "question": "According to Rita Garcia et al., what was the estimated municipal plastic packaging collection rate in Portugal for 2019?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 2.362636307308832,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 2,
+      "key_facts_total": 3,
+      "key_facts_coverage": 0.6666666666666666,
+      "latency_ms_retrieval": 254.59450000198558,
+      "latency_ms_generation": 5.427399999462068,
+      "latency_ms_total": 271.90569997765124,
+      "actual_answer": "The evidence in Rita Garcia.pdf (page 6) elucidates that: \"However, when considering overall recycling rates (19%), Portugal rates are lower than in Austria (26%) (Van Eygen et al., 2018), but higher than the EU27 Fig. 3. Disaggregated material flow analysis for plastic packaging in Portugal, 2019. Table 2 Results for the circularity indicators for plastic packaging in Portugal for 2017, 2018, and 2019.\" [cite:1]\n\nFurthermore, Rita Garcia.pdf (page 6) substantiates: \"Of the total imports, 24% corresponded to plastic packaging incorporated into final products, with the remaining imports comprising plastic packaging as final product. From 2017 to 2019, the amount of plastic packaging waste generated in Portugal was 1.3 million tonnes. Most plastic packaging waste generated (92%-98%) was collected and sorted for treatment, and the remaining ending up in the environment as littered and mismanaged.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            6
+          ],
+          "excerpt": "However, when considering overall recycling rates (19%), Portugal rates are lower than in Austria (26%) (Van Eygen et al"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            6
+          ],
+          "excerpt": "Of the total imports, 24% corresponded to plastic packaging incorporated into final products, with the remaining imports"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_multi_01",
+      "category": "multi_passage",
+      "question": "In Emami et al., what proportion of total plastic waste was collected for recycling versus uncollected in India in 2018-19?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.5,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 0.9947688771379922,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.0,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 4,
+      "key_facts_coverage": 0.75,
+      "latency_ms_retrieval": 276.7343000159599,
+      "latency_ms_generation": 5.877399991732091,
+      "latency_ms_total": 294.1965999780223,
+      "actual_answer": "The evidence in Emami.pdf (page 4) elucidates that: \"While this broadly concurs with their first estimate above, no specific number for recycling was given. Though it is possible that recycling genuinely is the fate of ~ 60%-70% of plastic waste in India, this collection of citations does not provide a basis in fact.\" [cite:1]\n\nFurthermore, Emami.pdf (page 6) substantiates: \"The data used to generate this figure are available in the table labelled SM 9 of the supplementary materials 3590 Journal of Material Cycles and Waste Management (2024) 26:3584-3595 Total mass of plastic in plastic-containing products assembled and distributed into different applications was 23.8 Mt (total apparent consumption = production + imports- exports).\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Emami.pdf",
+          "pages": [
+            4
+          ],
+          "excerpt": "While this broadly concurs with their first estimate above, no specific number for recycling was given. Though it is pos"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Emami.pdf",
+          "pages": [
+            6,
+            7
+          ],
+          "excerpt": "The data used to generate this figure are available in the table labelled SM 9 of the supplementary materials 3590 Journ"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_cross_01",
+      "category": "cross_paper_synthesis",
+      "question": "Compare the focus on packaging plastics between Rita Garcia et al. in Portugal and Yamamoto et al. in Japan.",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 0.3333333333333333,
+      "retrieval_recall_at_10": 0.3333333333333333,
+      "retrieval_mrr": 0.2,
+      "retrieval_ndcg_at_10": 0.18154179253735267,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.3333333333333333,
+      "citation_page_accuracy": 0.5,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 3,
+      "key_facts_total": 4,
+      "key_facts_coverage": 0.75,
+      "latency_ms_retrieval": 1531.4428000128828,
+      "latency_ms_generation": 12.933199992403388,
+      "latency_ms_total": 1557.8440999961458,
+      "actual_answer": "### Supported Findings by Source\n\nIn **Rita Garcia.pdf** (pages 1):\n- Regarding **focus on packaging plastics in Rita Garcia et al. in Portugal**: \"Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal Mariana Gonçalves a,*, Fausto Freire a, Rita Garcia b,c a Univ Coimbra, ADAI, Department of Mechanical Engineering, Rua Luís Reis Santos, P´olo II, 3030-788 Coimbra, Portugal b Itecons - Institute for Research and Technological Development in Construction, Energy, Environment and Sustainability, Rua Pedro Hispano, s/d, 3030-286 Coimbra, Portugal c Univ Coimbra, CERIS, Department of Civil Engineering, Rua Luís Reis Santos, P´olo II, 3030-788, Coimbra, Portugal A R T I C L E I N F O Keywords: Circular economy Circularity indicators Material flow analysis (MFA) Plastic packaging Waste Management A B S T R A C T Material flow analysis (MFA) has been used to investigate plastic flows, albeit with limitations in providing a comprehensive assessment.\" [cite:1]\n\nIn **Haruhisa Yamamoto.pdf** (pages 12):\n- Regarding **focus on packaging plastics in Yamamoto et al. in Japan**: \"Interview on the plastic container and packaging waste recycling in Japan [Interview]. http://www.mmplastic.co.jp/.\" [cite:2]\n\n### Cross-Paper Synthesis\n\nA cross-paper synthesis across distinct studies reveals clear methodological complementarity. Empirical material-flow analyses (MFA) provide foundational mass-balance quantifications of polymer stocks, consumption volumes, and unaccounted system leakages. Concurrently, data-driven Extended Producer Responsibility (EPR) frameworks and digital logging architectures establish verifiable tracking mechanisms to operationalize transparency, connecting downstream waste management activities with upstream producer obligations.\n\n### Identified Research Gaps\n\n- The literature underscores empirical data scarcity across informal recovery channels and emphasizes the necessity of standardized mass-balance reporting protocols to eliminate unaccounted loss estimates.\n\n### Insufficient Evidence & Unsubstantiated Facets\n\nAll decomposed subquestions were directly addressed and substantiated by passages in the selected literature.",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Rita Garcia.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "Full length article Material flow analysis and circularity assessment of plastic packaging: An application to Portugal M"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Haruhisa Yamamoto.pdf",
+          "pages": [
+            12
+          ],
+          "excerpt": "Interview on the plastic container and packaging waste recycling in Japan [Interview]. http://www.mmplastic.co.jp/."
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_num_01",
+      "category": "numerical_facts",
+      "question": "In Shukla et al., what percentage of global plastic waste is estimated to be landfilled, incinerated, and recycled?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 0.5,
+      "retrieval_ndcg_at_10": 0.9871369406794797,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 2,
+      "verified_citation_count": 2,
+      "citation_precision": 1.0,
+      "citation_recall": 0.0,
+      "citation_page_accuracy": 0.0,
+      "total_claims_count": 2,
+      "supported_claims_count": 2,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 4,
+      "key_facts_total": 6,
+      "key_facts_coverage": 0.6666666666666666,
+      "latency_ms_retrieval": 392.46509998338297,
+      "latency_ms_generation": 7.758499996270984,
+      "latency_ms_total": 415.9970000036992,
+      "actual_answer": "The evidence in Saurabh Shukla.pdf (page 6) elucidates that: \"According to Vidal et al. [1]., only 9% of the global plastic waste in 2019 was recycled mechanically into new products, with ~ 320 Mt released into landfills, incinerated, or dispersed into the environment. And plastic waste can potentially triple by the year 2060, if not remediated.\" [cite:1]\n\nFurthermore, Saurabh Shukla.pdf (page 4) substantiates: \"Plastic recycling comprehends the complete process from waste collection to reprocessing it into value added products. At a global scale, more than 6900 Mt of plastic waste would have ended up in landfills or dispersed in the environment by 2024.\" [cite:2]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            6
+          ],
+          "excerpt": "According to Vidal et al. [1]., only 9% of the global plastic waste in 2019 was recycled mechanically into new products,"
+        },
+        {
+          "cite_id": "cite:2",
+          "file": "Saurabh Shukla.pdf",
+          "pages": [
+            4
+          ],
+          "excerpt": "Plastic recycling comprehends the complete process from waste collection to reprocessing it into value added products. A"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_num_02",
+      "category": "numerical_facts",
+      "question": "According to Somantri et al., how many plastic categories were recorded in purchase transactions versus supply transactions in 2024?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.3010299956639813,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 1,
+      "supported_claims_count": 1,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 4,
+      "key_facts_total": 4,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 276.58409997820854,
+      "latency_ms_generation": 5.176500009838492,
+      "latency_ms_total": 296.53630004031584,
+      "actual_answer": "The evidence in Somantri.pdf (page 1) elucidates that: \"A comprehensive analysis of plastic waste transactions during 2024 was conducted to characterize material flows and evaluate the applicability of the proposed framework. The results identified 18 categories of plastic waste materials, with nine categories recorded in purchase transactions totaling 27,028,801 kg and seven categories recorded in supply transactions totaling 4,896,392 kg.\" [cite:1]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "A comprehensive analysis of plastic waste transactions during 2024 was conducted to characterize material flows and eval"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_gap_01",
+      "category": "research_gaps",
+      "question": "What data limitations in tracking post-consumer packaging flows in developing economies did Somantri et al. seek to address?",
+      "should_abstain": false,
+      "actually_abstained": false,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.8333333333333333,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 1,
+      "verified_citation_count": 1,
+      "citation_precision": 1.0,
+      "citation_recall": 0.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 1,
+      "supported_claims_count": 1,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 1,
+      "key_facts_total": 4,
+      "key_facts_coverage": 0.25,
+      "latency_ms_retrieval": 294.068299990613,
+      "latency_ms_generation": 5.83460001507774,
+      "latency_ms_total": 313.4503000183031,
+      "actual_answer": "The analysis in Somantri.pdf (page 1) elucidates the salient challenge: \"A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow of plastic waste, resulting in a significant imbalance between the amount of plastic produced and that successfully recycled. This situation underscores the urgency of developing approaches to close data gaps, enhance traceability, and ensure more systematic plastic management through multi-actor collaboration.\" [cite:1]",
+      "citations_preview": [
+        {
+          "cite_id": "cite:1",
+          "file": "Somantri.pdf",
+          "pages": [
+            1
+          ],
+          "excerpt": "A similar situation occurs in Indonesia, where recycling infrastructure is still unable to accommodate the entire flow o"
+        }
+      ],
+      "warnings": [],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_restrict_01",
+      "category": "source_restriction",
+      "question": "What was the total volume of plastic production in India in 2018-19 according to the selected Japanese literature?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 437.5228999997489,
+      "latency_ms_generation": 0.8573000086471438,
+      "latency_ms_total": 454.4567000120878,
+      "actual_answer": "The selected documents do not contain evidence concerning India. The available literature for the selected sources does not report data for this region.",
+      "citations_preview": [],
+      "warnings": [
+        "Selected documents do not contain evidence for required geographic entity 'india'."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_abstain_01",
+      "category": "unanswerable_abstention",
+      "question": "What was the fine in USD levied on illegal ocean plastic dumping by the International Maritime Organization in 2024?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 927.1827999618836,
+      "latency_ms_generation": 3.1588000128977,
+      "latency_ms_total": 945.1469999621622,
+      "actual_answer": "The retrieved passages do not contain sufficient evidence to answer this question accurately.",
+      "citations_preview": [],
+      "warnings": [
+        "Retrieved passages did not contain sufficient semantic overlap with question terms."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    },
+    {
+      "sample_id": "heldout_abstain_02",
+      "category": "unanswerable_abstention",
+      "question": "Which quantum key distribution protocols were used to encrypt blockchain transactions in Somantri et al.?",
+      "should_abstain": true,
+      "actually_abstained": true,
+      "abstention_correct": true,
+      "retrieval_recall_at_5": 1.0,
+      "retrieval_recall_at_10": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_ndcg_at_10": 1.0,
+      "retrieved_chunk_count": 10,
+      "raw_citation_count": 0,
+      "verified_citation_count": 0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "citation_page_accuracy": 1.0,
+      "total_claims_count": 0,
+      "supported_claims_count": 0,
+      "unsupported_claims_count": 0,
+      "unsupported_claim_rate": 0.0,
+      "key_facts_found_count": 0,
+      "key_facts_total": 0,
+      "key_facts_coverage": 1.0,
+      "latency_ms_retrieval": 274.74660001462325,
+      "latency_ms_generation": 2.737000002525747,
+      "latency_ms_total": 291.5982000413351,
+      "actual_answer": "The retrieved passages do not contain sufficient evidence to answer this question accurately.",
+      "citations_preview": [],
+      "warnings": [
+        "Retrieved passages did not contain sufficient semantic overlap with question terms."
+      ],
+      "error": null,
+      "human_rating_factual_correctness": null,
+      "human_notes": null
+    }
+  ],
+  "scoring_rules": {
+    "Recall@k": "Fraction of ground-truth document+page targets present in top k retrieved chunks.",
+    "MRR": "Reciprocal rank of first retrieved chunk matching ground-truth document+page.",
+    "nDCG@10": "Normalized Discounted Cumulative Gain at rank 10 with binary relevance.",
+    "Citation Precision": "Fraction of returned verified citations that match ground-truth document+page.",
+    "Abstention F1": "Harmonic mean of precision and recall for insufficient_evidence classification.",
+    "Facts Coverage": "Fraction of expected key facts and figures present in the synthesized answer."
+  },
+  "known_limitations": [
+    "Exact page matching allows a +/- 1 page window to accommodate boundary overlap across PDF pagination.",
+    "Abstention precision evaluates explicit 'insufficient_evidence: true' flag rather than free-form prose refusal.",
+    "Key facts coverage relies on token and entity matching; human review is recommended for semantic nuances."
+  ]
+}

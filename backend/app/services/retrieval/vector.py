@@ -1,5 +1,4 @@
-"""Dense Vector Retrieval using Cosine Similarity."""
-
+"""Dense Vector Retrieval using Cosine Similarity with Section Awareness."""
 
 import numpy as np
 from sqlalchemy import select
@@ -9,6 +8,7 @@ from app.core.config import settings
 from app.models.chunk import Chunk
 from app.models.document import Document
 from app.services.ingestion.embedder import get_embedder
+from app.services.retrieval.query_processor import is_reference_chunk, process_query
 
 
 class VectorRetriever:
@@ -24,7 +24,9 @@ class VectorRetriever:
         top_k: int = settings.RETRIEVAL_TOP_K,
     ) -> list[tuple[Chunk, float]]:
         """Performs dense vector similarity search scoped strictly to documents owned by user_id."""
-        query_vec = self.embedder.embed_query(query)
+        pq = process_query(query)
+        # Embed the cleaned query rather than raw meta-prompts
+        query_vec = self.embedder.embed_query(pq.cleaned_query)
 
         # Base query joining Chunk with Document to guarantee tenant ownership isolation
         stmt = (
@@ -48,6 +50,10 @@ class VectorRetriever:
         q_norm = np.linalg.norm(query_vec)
         scored_chunks: list[tuple[Chunk, float]] = []
 
+        is_asking_for_references = any(
+            w in pq.cleaned_query.lower() for w in ["reference", "references", "bibliography", "cited in", "doi"]
+        )
+
         for chunk, doc in rows:
             emb = chunk.embedding
             if not emb:
@@ -55,6 +61,16 @@ class VectorRetriever:
             emb_arr = np.array(emb, dtype=np.float32)
             denom = q_norm * np.linalg.norm(emb_arr) + 1e-9
             cos_sim = float(np.dot(query_vec, emb_arr) / denom)
+
+            # Check if this chunk is purely bibliographic references / CRediT authorship
+            if is_reference_chunk(chunk.text) and not is_asking_for_references:
+                cos_sim *= 0.35
+
+            # Overview / problem / objective / meta questions benefit from early paper structure (Abstract & Intro)
+            pages = chunk.page_numbers or []
+            if (pq.is_overview_query or pq.is_meta_query) and any(p in [1, 2] for p in pages) and chunk.chunk_index <= 35:
+                cos_sim *= 1.15
+
             # Attach document object to chunk for provenance lookup
             chunk.document = doc
             scored_chunks.append((chunk, cos_sim))

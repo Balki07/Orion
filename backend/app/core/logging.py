@@ -8,9 +8,21 @@ from typing import Any
 
 
 class OrionJsonFormatter(logging.Formatter):
-    """Formats log records as structured JSON without leaking sensitive credentials."""
+    """Formats log records as structured JSON without leaking sensitive credentials or raw document texts."""
 
-    SENSITIVE_KEYS = {"password", "token", "secret", "gemini_api_key", "authorization", "key"}
+    SENSITIVE_KEYS = {
+        "password",
+        "token",
+        "secret",
+        "gemini_api_key",
+        "authorization",
+        "key",
+        "cookie",
+        "document_text",
+        "raw_text",
+        "chunk_text",
+        "jwt",
+    }
 
     def format(self, record: logging.LogRecord) -> str:
         log_payload: dict[str, Any] = {

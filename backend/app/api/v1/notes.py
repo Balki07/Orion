@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import AuthenticatedUser, get_current_user, get_db
+from app.api.deps import AuthenticatedUser, get_db, require_active_researcher
 from app.core.errors import NoteNotFoundError
 from app.models.note import ResearchNote
 from app.schemas.note import (
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/notes", tags=["Notes"])
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=NoteResponse)
 async def create_note(
     body: NoteCreate,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Save an answer or research synthesis as a persistent note."""
@@ -43,7 +43,7 @@ async def create_note(
 
 @router.get("", response_model=NoteListResponse)
 async def list_notes(
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """List all notes owned by user."""
@@ -61,7 +61,7 @@ async def list_notes(
 @router.get("/{note_id}", response_model=NoteResponse)
 async def get_note(
     note_id: str,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Get note details."""
@@ -79,7 +79,7 @@ async def get_note(
 async def update_note(
     note_id: str,
     body: NoteUpdate,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Update title, content, or citations of a note."""
@@ -106,7 +106,7 @@ async def update_note(
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_note(
     note_id: str,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Delete a research note."""
@@ -124,7 +124,7 @@ async def delete_note(
 @router.get("/{note_id}/export", response_model=NoteExportResponse)
 async def export_note(
     note_id: str,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Export note as publication-ready Markdown preserving all verified citations."""

@@ -1,7 +1,12 @@
 """FastAPI Dependency Injection helpers."""
 
 from app.db.session import get_db
-from app.security.auth import AuthenticatedUser, get_current_user
+from app.security.auth import (
+    AuthenticatedUser,
+    get_current_user,
+    require_active_researcher,
+    require_admin_user,
+)
 from app.services.citations.validator import CitationValidator, get_citation_validator
 from app.services.generation.llm import GeminiService, get_gemini_service
 from app.services.ingestion.pipeline import IngestionPipeline, get_ingestion_pipeline
@@ -17,6 +22,8 @@ __all__ = [
     "StorageService",
     "get_citation_validator",
     "get_current_user",
+    "require_active_researcher",
+    "require_admin_user",
     "get_db",
     "get_gemini_service",
     "get_ingestion_pipeline",

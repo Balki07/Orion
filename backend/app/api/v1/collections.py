@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import AuthenticatedUser, get_current_user, get_db
+from app.api.deps import AuthenticatedUser, get_db, require_active_researcher
 from app.core.errors import CollectionNotFoundError
 from app.models.collection import Collection, DocumentCollection
 from app.models.document import Document
@@ -23,7 +23,7 @@ router = APIRouter(prefix="/collections", tags=["Collections"])
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=CollectionResponse)
 async def create_collection(
     body: CollectionCreate,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Create a new research collection."""
@@ -42,7 +42,7 @@ async def create_collection(
 
 @router.get("", response_model=CollectionListResponse)
 async def list_collections(
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """List all collections owned by authenticated user with member counts."""
@@ -68,7 +68,7 @@ async def list_collections(
 @router.get("/{collection_id}", response_model=CollectionResponse)
 async def get_collection(
     collection_id: str,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Retrieve details of a collection."""
@@ -93,7 +93,7 @@ async def get_collection(
 async def update_collection(
     collection_id: str,
     body: CollectionUpdate,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Update name or description of a collection."""
@@ -125,7 +125,7 @@ async def update_collection(
 @router.delete("/{collection_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_collection(
     collection_id: str,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Delete a collection record."""
@@ -144,7 +144,7 @@ async def delete_collection(
 async def add_documents_to_collection(
     collection_id: str,
     body: AddDocumentToCollectionRequest,
-    current_user: AuthenticatedUser = Depends(get_current_user),
+    current_user: AuthenticatedUser = Depends(require_active_researcher),
     db: AsyncSession = Depends(get_db),
 ):
     """Associate documents with a collection."""

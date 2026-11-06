@@ -37,3 +37,29 @@ def reciprocal_rank_fusion(
     ]
 
     return fused_results
+
+
+def multi_list_reciprocal_rank_fusion(
+    ranked_lists: list[list[tuple[Chunk, float]]],
+    weights: list[float] | None = None,
+    k: int = 60,
+    top_k: int = settings.RETRIEVAL_TOP_K,
+) -> list[tuple[Chunk, float]]:
+    """Fuses multiple ranked candidate lists using reciprocal rank fusion.
+
+    RRF(d) = sum_i( weight_i / (k + rank_i + 1) )
+    """
+    scores: dict[str, float] = {}
+    chunk_map: dict[str, Chunk] = {}
+
+    if weights is None:
+        weights = [1.0] * len(ranked_lists)
+
+    for r_list, weight in zip(ranked_lists, weights):
+        for rank, (chunk, _) in enumerate(r_list):
+            chunk_map[chunk.id] = chunk
+            scores[chunk.id] = scores.get(chunk.id, 0.0) + (weight / (k + rank + 1))
+
+    sorted_items = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+    return [(chunk_map[cid], score) for cid, score in sorted_items[:top_k]]
+

@@ -18,16 +18,21 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 interface DashboardViewProps {
   onNavigate: (tab: NavigationTab) => void;
   onOpenUpload: () => void;
+  refreshTrigger?: number;
 }
 
-export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpenUpload }) => {
+export const DashboardView: React.FC<DashboardViewProps> = ({
+  onNavigate,
+  onOpenUpload,
+  refreshTrigger = 0,
+}) => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [usage, setUsage] = useState<UserUsage | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [refreshTrigger]);
 
   const loadDashboardData = async () => {
     try {
@@ -45,13 +50,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto space-y-6 sm:space-y-8">
       {/* Editorial Welcome Header */}
-      <div className="border-b border-parchment-300 pb-6">
-        <span className="text-[11px] font-mono uppercase tracking-wider text-navy-800 font-bold bg-navy-50 px-2 py-0.5 rounded border border-navy-200">
+      <div className="border-b border-parchment-300 pb-4 sm:pb-6">
+        <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-navy-800 font-bold bg-navy-50 px-2 py-0.5 rounded border border-navy-200">
           ORION Research Assistant
         </span>
-        <h1 className="text-3xl font-serif font-bold text-ink-950 mt-2">
+        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-ink-950 mt-2">
           Research Deeper. Verify Every Answer.
         </h1>
         <p className="text-xs text-ink-600 mt-1 max-w-2xl leading-relaxed">
@@ -183,16 +188,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             {documents.map((doc) => (
               <div
                 key={doc.id}
-                className="px-6 py-3.5 flex items-center justify-between hover:bg-parchment-50 transition-colors text-xs"
+                className="px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between hover:bg-parchment-50 transition-colors text-xs gap-2"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                   <FileText className="w-4 h-4 text-navy-700 shrink-0" />
-                  <span className="font-medium text-ink-950 truncate max-w-sm">
+                  <span className="font-medium text-ink-950 truncate max-w-[160px] xs:max-w-xs sm:max-w-sm">
                     {doc.filename}
                   </span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="font-mono text-ink-400 text-[11px]">
+                <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                  <span className="font-mono text-ink-400 text-[10px] sm:text-[11px] hidden xs:inline">
                     {doc.page_count} pp • {doc.chunk_count} chunks
                   </span>
                   <StatusBadge status={doc.status} />

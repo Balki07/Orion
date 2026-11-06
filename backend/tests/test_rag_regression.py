@@ -5,6 +5,7 @@ import pytest
 import pymupdf
 from sqlalchemy import select
 
+from app.core.errors import IngestionError
 from app.db.base import Base
 from app.models.chunk import Chunk
 from app.models.document import Document
@@ -215,7 +216,11 @@ async def test_genuinely_unanswerable_question_produces_abstention(client, synth
 
     assert data["insufficient_evidence"] is True
     assert len(data["citations"]) == 0
-    assert "insufficient evidence" in data["answer"].lower() or "not contain" in data["answer"].lower()
+    assert (
+        "insufficient evidence" in data["answer"].lower()
+        or "not contain" in data["answer"].lower()
+        or "contains no" in data["answer"].lower()
+    )
 
 
 def test_fabricated_citation_id_rejected():
@@ -337,13 +342,624 @@ def test_empty_or_malformed_pdf_no_usable_evidence():
     with pytest.raises(Exception):
         extractor.extract_from_bytes(b"Malformed binary data without PDF header", filename="bad.pdf")
 
-    # 2. Blank PDF page with zero text characters
+    # 2. Blank PDF page with zero text characters raises IngestionError (no usable evidence)
     blank_doc = pymupdf.open()
     blank_doc.new_page(width=595, height=842)
     blank_bytes = blank_doc.tobytes()
     blank_doc.close()
 
-    result = extractor.extract_from_bytes(blank_bytes, filename="empty.pdf")
-    assert result.total_pages == 1
-    assert result.is_scanned_or_empty is True
-    assert result.total_characters == 0
+    with pytest.raises(IngestionError) as exc_info:
+        extractor.extract_from_bytes(blank_bytes, filename="empty.pdf")
+    assert exc_info.value.error_code == "ERR_PDF_SCANNED_NO_TEXT"
+
+
+@pytest.mark.asyncio
+async def test_self_attention_question_abstains_when_papers_lack_transformer_evidence(client, synthetic_paper_pdf):
+    """Proves that asking about self-attention complexity on documents lacking transformer evidence legitimately abstains."""
+    user_id = "user_eval_attention_test"
+    headers = {"X-User-Id": user_id}
+
+    # Upload synthetic paper (about decentralized plastic credit, not Transformers)
+    files = {"file": ("cleanchain_evaluation.pdf", io.BytesIO(synthetic_paper_pdf), "application/pdf")}
+    upload_res = await client.post("/api/v1/documents", files=files, headers=headers)
+    assert upload_res.status_code == 201
+    doc_id = upload_res.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id, session)
+
+    # Ask the exact user question about self-attention complexity
+    payload = {
+        "question": "What is the computational complexity of self-attention per layer?",
+        "document_ids": [doc_id],
+        "top_k": 5,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+
+    # The system must abstain with genuine insufficient evidence and not hallucinate O(n^2)
+    assert data["insufficient_evidence"] is True
+    assert data["reason_code"] == "GENUINE_INSUFFICIENT_EVIDENCE"
+    assert len(data["citations"]) == 0
+
+
+@pytest.mark.asyncio
+async def test_multi_passage_evidence_retrieval_and_synthesis(client, synthetic_paper_pdf):
+    """Proves that a question requiring evidence from multiple pages (p.1 abstract + p.2 benchmarks) retrieves both."""
+    user_id = "user_eval_multi_passage"
+    headers = {"X-User-Id": user_id}
+
+    files = {"file": ("cleanchain_evaluation.pdf", io.BytesIO(synthetic_paper_pdf), "application/pdf")}
+    upload_res = await client.post("/api/v1/documents", files=files, headers=headers)
+    assert upload_res.status_code == 201
+    doc_id = upload_res.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id, session)
+
+    # Multi-passage question spanning smart contract architecture (p.1) and confirmation latency (p.2)
+    payload = {
+        "question": "Which smart contract blockchain does CleanChain use, and what average confirmation latency was recorded in stress-testing?",
+        "document_ids": [doc_id],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+
+    assert data["insufficient_evidence"] is False
+    assert data["reason_code"] == "ANSWER_GROUNDED"
+    assert len(data["citations"]) >= 1
+
+    cited_pages = {p for c in data["citations"] for p in c["page_numbers"]}
+    # Should cite page 1 and/or page 2
+    assert (1 in cited_pages) or (2 in cited_pages)
+    answer_lower = data["answer"].lower()
+    assert ("polygon" in answer_lower or "smart contract" in answer_lower)
+    assert ("4.12" in answer_lower or "latency" in answer_lower)
+
+
+@pytest.mark.asyncio
+async def test_conflicting_statements_across_documents(client):
+    """Proves that conflicting statements across two selected documents are attributed to their respective sources."""
+    user_id = "user_eval_conflicts"
+    headers = {"X-User-Id": user_id}
+
+    # Document A: Claims 4.12s latency
+    doc_a = pymupdf.open()
+    p1_a = doc_a.new_page(width=595, height=842)
+    p1_a.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "CleanChain Baseline Report\n\nIn standard trials, CleanChain demonstrated an average confirmation latency of 4.12 seconds.",
+    )
+    bytes_a = doc_a.tobytes()
+    doc_a.close()
+
+    # Document B: Claims 28.5s latency under high congestion
+    doc_b = pymupdf.open()
+    p1_b = doc_b.new_page(width=595, height=842)
+    p1_b.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "CleanChain Stress Report\n\nUnder severe network congestion, CleanChain exhibited an elevated confirmation latency of 28.5 seconds.",
+    )
+    bytes_b = doc_b.tobytes()
+    doc_b.close()
+
+    files_a = {"file": ("report_baseline.pdf", io.BytesIO(bytes_a), "application/pdf")}
+    res_a = await client.post("/api/v1/documents", files=files_a, headers=headers)
+    doc_id_a = res_a.json()["id"]
+
+    files_b = {"file": ("report_stress.pdf", io.BytesIO(bytes_b), "application/pdf")}
+    res_b = await client.post("/api/v1/documents", files=files_b, headers=headers)
+    doc_id_b = res_b.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id_a, session)
+        await pipeline.process_document(doc_id_b, session)
+
+    # Ask across both documents
+    payload = {
+        "question": "What confirmation latency is reported for CleanChain across the studies?",
+        "document_ids": [doc_id_a, doc_id_b],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+
+    assert data["insufficient_evidence"] is False
+    assert len(data["citations"]) >= 1
+    # Verify citations reference the valid documents
+    cited_doc_ids = {c["document_id"] for c in data["citations"]}
+    assert doc_id_a in cited_doc_ids or doc_id_b in cited_doc_ids
+
+
+def test_unsupported_numerical_claims_flagged():
+    """Proves that claims with unsupported numerical figures are flagged as unsupported."""
+    validator = CitationValidator()
+    chunk = Chunk(
+        id="chunk_metric_001",
+        document_id="doc_alpha",
+        chunk_index=0,
+        text="In stress-testing, CleanChain demonstrated an average confirmation latency of 4.12 seconds and an audited throughput of 142 transactions per second.",
+        page_numbers=[2],
+    )
+    chunk.document = Document(id="doc_alpha", filename="cleanchain.pdf")
+
+    raw_response = {
+        "answer": "CleanChain achieved 4.12s latency [cite:1] and 9500 transactions per second [cite:1].",
+        "claims": [
+            {"text": "CleanChain achieved an average confirmation latency of 4.12 seconds.", "citation_ids": ["cite:1"]},
+            {"text": "CleanChain throughput reached 9500 transactions per second under load.", "citation_ids": ["cite:1"]},
+        ],
+        "citations": [
+            {
+                "citation_id": "cite:1",
+                "document_id": "doc_alpha",
+                "filename": "cleanchain.pdf",
+                "page_numbers": [2],
+                "chunk_ids": ["chunk_metric_001"],
+                "excerpt": "4.12 seconds and an audited throughput of 142 transactions per second.",
+            }
+        ],
+    }
+
+    verified_cites, verified_claims, warnings, insufficient = validator.validate_and_hydrate(
+        raw_response=raw_response,
+        retrieved_chunks=[chunk],
+    )
+
+    assert len(verified_cites) == 1
+    claim_statuses = {cl.text: cl.support_status for cl in verified_claims}
+    assert claim_statuses["CleanChain achieved an average confirmation latency of 4.12 seconds."] == "supported"
+    # The 9500 tps claim must be flagged as unsupported because 9500 does not appear in the evidence
+    assert claim_statuses["CleanChain throughput reached 9500 transactions per second under load."] == "unsupported"
+    assert any("contains unverified numerical figures" in w for w in warnings)
+
+
+def test_mismatched_citation_document_id_rejected():
+    """Proves that a citation where claimed document_id does not match the chunk's true document is rejected."""
+    validator = CitationValidator()
+    chunk = Chunk(
+        id="chunk_true_alpha",
+        document_id="doc_alpha",
+        chunk_index=0,
+        text="CleanChain utilizes smart contracts on Polygon.",
+        page_numbers=[1],
+    )
+    chunk.document = Document(id="doc_alpha", filename="alpha.pdf")
+
+    raw_response = {
+        "answer": "CleanChain uses Polygon smart contracts [cite:1].",
+        "claims": [
+            {"text": "CleanChain uses Polygon smart contracts.", "citation_ids": ["cite:1"]},
+        ],
+        "citations": [
+            {
+                "citation_id": "cite:1",
+                "document_id": "doc_mismatched_beta",  # Deliberately claims doc_beta for doc_alpha's chunk
+                "filename": "beta.pdf",
+                "page_numbers": [1],
+                "chunk_ids": ["chunk_true_alpha"],
+                "excerpt": "CleanChain utilizes smart contracts on Polygon.",
+            }
+        ],
+    }
+
+    verified_cites, verified_claims, warnings, insufficient = validator.validate_and_hydrate(
+        raw_response=raw_response,
+        retrieved_chunks=[chunk],
+    )
+
+    # Mismatched citation must be rejected
+    assert len(verified_cites) == 0
+    assert any("does not match actual chunk document" in w for w in warnings)
+    assert verified_claims[0].support_status == "unsupported"
+
+
+@pytest.mark.asyncio
+async def test_duplicate_uploads_handling(client, synthetic_paper_pdf):
+    """Proves that uploading the same PDF twice handles retrieval cleanly without errors."""
+    user_id = "user_eval_duplicates"
+    headers = {"X-User-Id": user_id}
+
+    # Upload duplicate 1
+    files1 = {"file": ("cleanchain_copy1.pdf", io.BytesIO(synthetic_paper_pdf), "application/pdf")}
+    res1 = await client.post("/api/v1/documents", files=files1, headers=headers)
+    doc_id1 = res1.json()["id"]
+
+    # Upload duplicate 2
+    files2 = {"file": ("cleanchain_copy2.pdf", io.BytesIO(synthetic_paper_pdf), "application/pdf")}
+    res2 = await client.post("/api/v1/documents", files=files2, headers=headers)
+    doc_id2 = res2.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id1, session)
+        await pipeline.process_document(doc_id2, session)
+
+    # Query with both duplicates selected
+    payload = {
+        "question": "What is the confirmation latency reported for CleanChain?",
+        "document_ids": [doc_id1, doc_id2],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+
+    assert data["insufficient_evidence"] is False
+    assert len(data["citations"]) >= 1
+    assert "4.12" in data["answer"] or "4.12" in data["citations"][0]["excerpt"]
+
+
+@pytest.mark.asyncio
+async def test_pipeline_failure_reason_codes(client):
+    """Proves that pipeline failure conditions return the correct structured diagnostic reason codes."""
+    user_id = "user_eval_reasons"
+    headers = {"X-User-Id": user_id}
+
+    # 1. NO_SELECTED_DOCUMENTS: querying nonexistent document IDs
+    payload_no_docs = {
+        "question": "What is the latency?",
+        "document_ids": ["doc_nonexistent_12345"],
+        "top_k": 5,
+    }
+    res_no_docs = await client.post("/api/v1/research/ask", json=payload_no_docs, headers=headers)
+    assert res_no_docs.status_code == 200
+    data_no_docs = res_no_docs.json()
+    assert data_no_docs["insufficient_evidence"] is True
+    assert data_no_docs["reason_code"] == "NO_SELECTED_DOCUMENTS"
+
+    # 2. SELECTED_DOCUMENTS_NOT_INDEXED: document exists but is not completed / has 0 chunks
+    from conftest import TestSessionLocal
+    async with TestSessionLocal() as db:
+        unindexed_doc = Document(
+            id="doc_unindexed_001",
+            owner_id=user_id,
+            filename="unprocessed.pdf",
+            storage_key="test/unprocessed.pdf",
+            content_hash="hash_unproc",
+            file_size=1024,
+            status="uploaded",  # Not completed
+            page_count=0,
+        )
+        db.add(unindexed_doc)
+        await db.commit()
+
+    payload_unindexed = {
+        "question": "What is the latency?",
+        "document_ids": ["doc_unindexed_001"],
+        "top_k": 5,
+    }
+    res_unindexed = await client.post("/api/v1/research/ask", json=payload_unindexed, headers=headers)
+    assert res_unindexed.status_code == 200
+    data_unindexed = res_unindexed.json()
+    assert data_unindexed["insufficient_evidence"] is True
+    assert data_unindexed["reason_code"] == "SELECTED_DOCUMENTS_NOT_INDEXED"
+
+
+def test_query_decomposition_patterns():
+    """Validates decomposition of compound inquiries into distinct subquestions before retrieval."""
+    from app.services.retrieval.query_processor import decompose_query, process_query
+
+    # 1. Imperative list with commas and 'and'
+    q1 = "Analyze fraudulent recycling claims, material-flow inconsistencies, traceability, unresolved research gaps, and relevance to the project's frozen research scope."
+    pq1 = process_query(q1)
+    assert pq1.is_compound_query is True
+    assert len(pq1.subqueries) == 5
+    assert "fraudulent recycling claims" in pq1.subqueries
+    assert "material-flow inconsistencies" in pq1.subqueries
+    assert "traceability" in pq1.subqueries
+    assert "unresolved research gaps" in pq1.subqueries
+    assert "relevance to the project's frozen research scope" in pq1.subqueries
+
+    # 2. Numbered list
+    q2 = "1. Material flow accounts in India\n2. Traceability platform architecture\n3. Empirical research gaps"
+    pq2 = process_query(q2)
+    assert pq2.is_compound_query is True
+    assert len(pq2.subqueries) == 3
+
+    # 3. Semicolon-separated subquestions
+    q3 = "What are the material flow inconsistencies; how is traceability ensured; what are the data limitations?"
+    pq3 = process_query(q3)
+    assert pq3.is_compound_query is True
+    assert len(pq3.subqueries) == 3
+
+    # 4. Single-topic query should NOT be decomposed
+    q4 = "What is the computational complexity of self-attention per layer?"
+    pq4 = process_query(q4)
+    assert pq4.is_compound_query is False
+    assert len(pq4.subqueries) == 1
+    assert pq4.subqueries[0] == q4
+
+
+@pytest.mark.asyncio
+async def test_multi_paper_synthesis_and_structured_sections(client):
+    """Proves end-to-end multi-paper research synthesis, structured section output, and partial coverage."""
+    user_id = "user_eval_synthesis"
+    headers = {"X-User-Id": user_id}
+
+    # Create Paper 1: Material Flow Analysis
+    doc1 = pymupdf.open()
+    p1 = doc1.new_page(width=595, height=842)
+    p1.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "National Plastic Material Flow Analysis and Informal Leakages\n\n"
+        "Authors: Dr. Rajesh Sharma and Dr. Anita Desai\n\n"
+        "Abstract: We quantify plastic material-flow accounts across the economy. Our mass-balance models "
+        "reveal substantial material-flow inconsistencies, with 2.4 Mt of plastic packaging leaking into informal "
+        "recycling channels without regulatory oversight.\n\n"
+        "Research Gaps: A critical research gap remains regarding the integration of informal waste pickers into formal EPR systems.",
+        fontsize=11
+    )
+    pdf1_bytes = doc1.tobytes()
+    doc1.close()
+
+    # Create Paper 2: Digital Traceability Platform
+    doc2 = pymupdf.open()
+    p2 = doc2.new_page(width=595, height=842)
+    p2.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "Digital Traceability Framework for Extended Producer Responsibility\n\n"
+        "Authors: Dr. Somantri Pratama and Budi Santoso\n\n"
+        "Abstract: We present an integrated platform providing end-to-end traceability for recycled polymers. "
+        "The digital ledger eliminates discrepancies between collection receipts and reprocessing declarations, "
+        "substantiating genuine material stewardship.\n\n"
+        "Research Limitations: A prominent research limitation is data scarcity in rural collection hubs.",
+        fontsize=11
+    )
+    pdf2_bytes = doc2.tobytes()
+    doc2.close()
+
+    # Upload and ingest both papers
+    files1 = {"file": ("national_plastic_mfa.pdf", io.BytesIO(pdf1_bytes), "application/pdf")}
+    res1 = await client.post("/api/v1/documents", files=files1, headers=headers)
+    assert res1.status_code == 201
+    doc_id1 = res1.json()["id"]
+
+    files2 = {"file": ("digital_traceability_epr.pdf", io.BytesIO(pdf2_bytes), "application/pdf")}
+    res2 = await client.post("/api/v1/documents", files=files2, headers=headers)
+    assert res2.status_code == 201
+    doc_id2 = res2.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id1, session)
+        await pipeline.process_document(doc_id2, session)
+
+    # Ask compound question covering supported facets (MFA, traceability, research gaps)
+    # and unsupported facets (fraudulent recycling claims, frozen research scope)
+    compound_payload = {
+        "question": "Analyze fraudulent recycling claims, material-flow inconsistencies, traceability, unresolved research gaps, and relevance to the project's frozen research scope.",
+        "document_ids": [doc_id1, doc_id2],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=compound_payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+
+    # 1. Partial evidence coverage: answers supported parts without global abstention
+    assert data["insufficient_evidence"] is False
+    answer = data["answer"]
+
+    # 2. Structured synthesis sections present
+    assert "### Supported Findings by Source" in answer
+    assert "### Cross-Paper Synthesis" in answer
+    assert "### Identified Research Gaps" in answer
+    assert "### Insufficient Evidence & Unsubstantiated Facets" in answer
+
+    # 3. Both papers cited with verified citations
+    doc_ids_cited = {c["document_id"] for c in data["citations"]}
+    assert doc_id1 in doc_ids_cited
+    assert doc_id2 in doc_ids_cited
+
+    filenames_cited = {c["filename"] for c in data["citations"]}
+    assert "national_plastic_mfa.pdf" in filenames_cited
+    assert "digital_traceability_epr.pdf" in filenames_cited
+
+    # 4. Negative grounding safeguard: unsupported claims explicitly identified
+    assert "fraudulent recycling claims" in answer
+    assert "frozen research scope" in answer
+    unsupported_claims = [cl for cl in data["claims"] if cl["support_status"] == "unsupported"]
+    assert len(unsupported_claims) >= 1
+
+
+@pytest.mark.asyncio
+async def test_compound_abstention_when_all_subquestions_unsupported(client):
+    """Proves that a compound query where ALL subquestions lack evidence strictly abstains."""
+    user_id = "user_eval_compound_abstain"
+    headers = {"X-User-Id": user_id}
+
+    # Upload single paper on plastic recycling
+    doc = pymupdf.open()
+    p = doc.new_page(width=595, height=842)
+    p.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "Plastic Recycling Operations and Sorting Logistics\n\n"
+        "Authors: Dr. Kevin Miller\n\n"
+        "Abstract: Overview of mechanical sorting and wash lines for post-consumer PET bottles.",
+        fontsize=11
+    )
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    files = {"file": ("pet_recycling.pdf", io.BytesIO(pdf_bytes), "application/pdf")}
+    res = await client.post("/api/v1/documents", files=files, headers=headers)
+    assert res.status_code == 201
+    doc_id = res.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id, session)
+
+    # Ask compound query completely unrelated to plastic sorting
+    unrelated_compound = {
+        "question": "Analyze quantum error correction, topological qubit braids, and cryogenic dilution refrigerators.",
+        "document_ids": [doc_id],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=unrelated_compound, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+
+    assert data["insufficient_evidence"] is True
+    assert len(data["claims"]) == 0
+
+
+@pytest.mark.asyncio
+async def test_excerpt_sentence_integrity_no_midword_cut():
+    """Proves that excerpt extraction uses neighbor chunks to form complete sentences and never cuts mid-word."""
+    from app.services.generation.llm import extract_complete_sentence_excerpt
+
+    chunk_mid_sentence = "has demonstrated that informal waste collection accounts for 43% of total recovery in Jakarta."
+    prev_chunk = "Previous field investigations in Southeast Asia. A comprehensive survey "
+    next_chunk = "Standardized reporting is required to verify credits. Further research is ongoing."
+
+    excerpt = extract_complete_sentence_excerpt(
+        chunk_text=chunk_mid_sentence,
+        prev_text=prev_chunk,
+        next_text=next_chunk,
+        target_terms={"informal", "recovery"},
+        max_chars=360,
+    )
+
+    # Must start with capital letter, end with period, and contain full sentence
+    assert excerpt[0].isupper()
+    assert excerpt.endswith(".")
+    assert "A comprehensive survey has demonstrated that informal waste collection accounts for 43% of total recovery in Jakarta." in excerpt
+    assert not excerpt.endswith(("...", "has", "has dem"))
+
+
+@pytest.mark.asyncio
+async def test_duplicate_document_detection_and_non_corroboration(client, synthetic_paper_pdf):
+    """Proves that duplicate uploads sharing content hash are detected and not counted as independent corroboration."""
+    user_id = "user_eval_dups"
+    headers = {"X-User-Id": user_id}
+
+    # Upload exact same bytes as two different filenames (simulating Somantri.pdf and isi_31.07_22.pdf)
+    files1 = {"file": ("paper_original.pdf", io.BytesIO(synthetic_paper_pdf), "application/pdf")}
+    res1 = await client.post("/api/v1/documents", files=files1, headers=headers)
+    assert res1.status_code == 201
+    doc_id1 = res1.json()["id"]
+
+    files2 = {"file": ("paper_renamed_copy.pdf", io.BytesIO(synthetic_paper_pdf), "application/pdf")}
+    res2 = await client.post("/api/v1/documents", files=files2, headers=headers)
+    assert res2.status_code == 201
+    doc_id2 = res2.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id1, session)
+        await pipeline.process_document(doc_id2, session)
+
+    # Ask multi-part question across both documents
+    payload = {
+        "question": (
+            "Synthesize findings from the selected documents:\n"
+            "1. What architecture is proposed for plastic credit verification?\n"
+            "2. Are there explicit findings or audits of fraudulent claims?"
+        ),
+        "document_ids": [doc_id1, doc_id2],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+    answer = data["answer"]
+
+    # Both documents remain preserved in database
+    async with TestSessionLocal() as session:
+        doc1 = await session.get(Document, doc_id1)
+        doc2 = await session.get(Document, doc_id2)
+        assert doc1 is not None and doc2 is not None
+        assert doc1.content_hash == doc2.content_hash
+
+    # Provenance note verifies duplicate copies rather than treating as independent corroboration
+    assert "SHA-256" in answer or "duplicate" in answer.lower()
+    assert "### Cross-Paper Synthesis" in answer
+
+
+@pytest.mark.asyncio
+async def test_non_repetitive_gap_and_consolidated_unsupported(client):
+    """Proves that research gaps do not repeat Section 1 excerpts and unsupported explanations are consolidated."""
+    user_id = "user_eval_non_repetitive"
+    headers = {"X-User-Id": user_id}
+
+    doc = pymupdf.open()
+    p1 = doc.new_page(width=595, height=842)
+    p1.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "Microplastic Material Flow Analysis in Urban Watersheds\n\n"
+        "Authors: Dr. Samuel Vance\n\n"
+        "Abstract: Empirical mass-balance tracking of polymer leakage in freshwater basins. "
+        "Primary finding: storm runoff accounts for 78% of unmanaged microplastic release across the municipal catchment area.",
+        fontsize=11
+    )
+    p2 = doc.new_page(width=595, height=842)
+    p2.insert_textbox(
+        pymupdf.Rect(50, 50, 550, 750),
+        "Methodological Limitations and Research Gaps\n\n"
+        "Section 4: A significant research gap exists regarding polymer degradation rates in sediment layers. "
+        "Unresolved data scarcity in benthic sampling limits long-term mass balance predictive accuracy.",
+        fontsize=11
+    )
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    files = {"file": ("watershed_mfa.pdf", io.BytesIO(pdf_bytes), "application/pdf")}
+    res = await client.post("/api/v1/documents", files=files, headers=headers)
+    assert res.status_code == 201
+    doc_id = res.json()["id"]
+
+    from conftest import TestSessionLocal
+    pipeline = get_ingestion_pipeline()
+    async with TestSessionLocal() as session:
+        await pipeline.process_document(doc_id, session)
+
+    payload = {
+        "question": (
+            "Comprehensive review of urban microplastics:\n"
+            "1. What proportion of leakage stems from storm runoff?\n"
+            "2. What explicit research gaps and data scarcities are reported?\n"
+            "3. Are there audits substantiating fraudulent recycling credits?\n"
+            "4. How does this align with the project's frozen research scope?"
+        ),
+        "document_ids": [doc_id],
+        "top_k": 8,
+    }
+    ask_res = await client.post("/api/v1/research/ask", json=payload, headers=headers)
+    assert ask_res.status_code == 200
+    data = ask_res.json()
+    answer = data["answer"]
+
+    # Section 1 contains the primary finding
+    assert "### Supported Findings by Source" in answer
+    assert "storm runoff" in answer
+
+    # Section 3 contains the distinct research gap without repeating Section 1 finding
+    assert "### Identified Research Gaps" in answer
+    assert "benthic" in answer or "degradation" in answer
+
+    # Section 4 consolidates unsupported facets without duplicate boilerplate
+    assert "### Insufficient Evidence & Unsubstantiated Facets" in answer
+    assert ("Allegations of Fraud" in answer or "fraud" in answer.lower())
+    assert ("External Research Scope Constraints" in answer or "scope" in answer.lower())
+
+    # Citations excerpts must all end in terminal punctuation
+    for cite in data["citations"]:
+        assert cite["excerpt"].endswith((".", "!", "?"))
+
+
+

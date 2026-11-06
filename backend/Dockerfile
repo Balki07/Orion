@@ -1,30 +1,70 @@
-FROM python:3.11-slim
+# ==============================================================================
+# Multi-stage Dockerfile for ORION Backend
+# ==============================================================================
 
-WORKDIR /app
+# Stage 1: Build & Dependencies
+FROM python:3.11-slim AS builder
 
-# Install system dependencies
+WORKDIR /build
+
+# System build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency specifications
-COPY requirements.txt pyproject.toml ./
-
-# Install python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Copy backend application source code
-COPY app/ ./app/
-COPY tests/ ./tests/
-
-# Environment defaults
 ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV HF_HOME=/opt/huggingface
+
+# Install CPU-only torch to keep image lean
+RUN pip install --upgrade pip && \
+    pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install application dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Pre-download local embedding model at build time
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')"
+
+# Stage 2: Production Runtime
+FROM python:3.11-slim AS runner
+
+WORKDIR /app
+
+# Install runtime tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create unprivileged application user
+RUN useradd -m -u 1000 -s /bin/bash orion && \
+    mkdir -p /app/storage/uploads /opt/huggingface && \
+    chown -R orion:orion /app /opt/huggingface
+
+# Copy python packages and pre-cached Hugging Face models from builder
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder --chown=orion:orion /opt/huggingface /opt/huggingface
+
+# Copy backend source code
+COPY --chown=orion:orion app/ ./app/
+COPY --chown=orion:orion migrations/ ./migrations/
+COPY --chown=orion:orion alembic.ini ./
+
+USER orion
+
+ENV PYTHONUNBUFFERED=1
+ENV HF_HOME=/opt/huggingface
+ENV EMBEDDING_DEVICE=cpu
 ENV ORION_ENV=production
 ENV BACKEND_HOST=0.0.0.0
 ENV BACKEND_PORT=8000
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

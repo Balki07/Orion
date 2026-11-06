@@ -4,16 +4,14 @@ import {
   Download,
   Trash2,
   Edit3,
-  FileText,
   Copy,
   Check,
-  Plus,
+  ChevronLeft,
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ResearchNoteItem } from '../../types';
 import { api } from '../../services/api';
-import { CitationChip } from '../../components/common/CitationChip';
 
 export const NotesView: React.FC = () => {
   const [notes, setNotes] = useState<ResearchNoteItem[]>([]);
@@ -22,6 +20,7 @@ export const NotesView: React.FC = () => {
   const [editTitle, setEditTitle] = useState<string>('');
   const [editContent, setEditContent] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+  const [showMobileList, setShowMobileList] = useState<boolean>(true);
 
   useEffect(() => {
     loadNotes();
@@ -42,6 +41,7 @@ export const NotesView: React.FC = () => {
   const handleSelectNote = (note: ResearchNoteItem) => {
     setSelectedNote(note);
     setIsEditing(false);
+    setShowMobileList(false);
   };
 
   const handleStartEdit = () => {
@@ -54,7 +54,6 @@ export const NotesView: React.FC = () => {
   const handleSaveEdit = async () => {
     if (!selectedNote) return;
     try {
-      // In a real API, PATCH /notes/{id}
       setSelectedNote({
         ...selectedNote,
         title: editTitle,
@@ -74,6 +73,9 @@ export const NotesView: React.FC = () => {
       const remaining = notes.filter((n) => n.id !== noteId);
       setNotes(remaining);
       setSelectedNote(remaining.length > 0 ? remaining[0] : null);
+      if (remaining.length === 0) {
+        setShowMobileList(true);
+      }
     } catch (err: any) {
       alert(`Deletion failed: ${err.message}`);
     }
@@ -103,17 +105,21 @@ export const NotesView: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-parchment-50">
-      {/* Left Column: Notes List (300px) */}
-      <div className="w-80 bg-white border-r border-parchment-300 flex flex-col shrink-0">
-        <div className="p-4 border-b border-parchment-200 bg-parchment-100 flex items-center justify-between">
+    <div className="flex flex-col md:flex-row h-full w-full overflow-hidden bg-parchment-50">
+      {/* Left Column: Notes List (Desktop permanent, Mobile toggleable) */}
+      <div
+        className={`${
+          showMobileList ? 'flex' : 'hidden md:flex'
+        } w-full md:w-80 bg-white border-r border-parchment-300 flex-col shrink-0 h-full min-w-0`}
+      >
+        <div className="p-3 sm:p-4 border-b border-parchment-200 bg-parchment-100 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-700 font-mono">
-            <BookMarked className="w-4 h-4 text-navy-800" />
+            <BookMarked className="w-4 h-4 text-navy-800 shrink-0" />
             <span>Research Notes ({notes.length})</span>
           </div>
         </div>
 
-        <div className="p-3 overflow-y-auto flex-1 space-y-1.5">
+        <div className="p-2 sm:p-3 overflow-y-auto flex-1 space-y-1.5 min-h-0">
           {notes.length === 0 ? (
             <div className="p-8 text-center text-xs text-ink-400">
               No notes saved yet. Save an answer in the Research Workspace to view it here.
@@ -125,7 +131,7 @@ export const NotesView: React.FC = () => {
                 <div
                   key={note.id}
                   onClick={() => handleSelectNote(note)}
-                  className={`p-3 rounded-lg border cursor-pointer text-xs transition-all ${
+                  className={`p-2.5 sm:p-3 rounded-lg border cursor-pointer text-xs transition-all ${
                     isSelected
                       ? 'bg-navy-50/70 border-navy-300 text-navy-950 font-medium shadow-xs'
                       : 'bg-white hover:bg-parchment-50 border-parchment-200 text-ink-700'
@@ -148,37 +154,63 @@ export const NotesView: React.FC = () => {
       </div>
 
       {/* Right Column: Note Viewer & Editor */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
+      <div
+        className={`${
+          !showMobileList ? 'flex' : 'hidden md:flex'
+        } flex-1 min-w-0 min-h-0 flex-col h-full overflow-hidden bg-white`}
+      >
         {selectedNote ? (
           <>
             {/* Header Toolbar */}
-            <div className="px-8 py-4 border-b border-parchment-200 bg-parchment-50 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-serif font-bold text-ink-950">
-                  {isEditing ? 'Editing Note' : selectedNote.title}
-                </h2>
-                <span className="text-[11px] font-mono text-ink-500">
-                  Last updated {new Date(selectedNote.updated_at).toLocaleString()}
-                </span>
+            <div className="px-4 sm:px-8 py-3 sm:py-4 border-b border-parchment-200 bg-parchment-50 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                {/* Mobile Back Button to Notes List */}
+                <button
+                  type="button"
+                  onClick={() => setShowMobileList(true)}
+                  className="md:hidden p-1.5 rounded-lg text-ink-700 hover:bg-parchment-200"
+                  aria-label="Back to Notes list"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base sm:text-lg font-serif font-bold text-ink-950 truncate">
+                    {isEditing ? 'Editing Note' : selectedNote.title}
+                  </h2>
+                  <span className="text-[10px] sm:text-[11px] font-mono text-ink-500 block truncate">
+                    Last updated {new Date(selectedNote.updated_at).toLocaleString()}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {!isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleStartEdit}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-parchment-300 hover:bg-parchment-100 text-ink-700 text-xs font-medium transition-colors"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Edit</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-parchment-300 hover:bg-parchment-100 text-ink-700 text-xs font-medium transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-parchment-300 hover:bg-parchment-100 text-ink-700 text-xs font-medium transition-colors"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-forest-600" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Copied' : 'Copy'}</span>
+                  <span className="hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleExportMarkdown}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-900 text-white text-xs font-medium shadow-subtle transition-all"
+                  className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-900 text-white text-xs font-medium shadow-subtle transition-all"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Export Markdown (.md)</span>
+                  <span className="hidden sm:inline">Export .md</span>
                 </button>
 
                 <button
@@ -186,6 +218,7 @@ export const NotesView: React.FC = () => {
                   onClick={() => handleDelete(selectedNote.id)}
                   className="p-1.5 rounded-lg text-ink-400 hover:text-red-700 hover:bg-red-50 transition-colors"
                   title="Delete Note"
+                  aria-label="Delete Note"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -193,20 +226,20 @@ export const NotesView: React.FC = () => {
             </div>
 
             {/* Note Content Area */}
-            <div className="p-8 overflow-y-auto flex-1 max-w-3xl space-y-6">
+            <div className="p-4 sm:p-8 overflow-y-auto flex-1 max-w-3xl space-y-6">
               {isEditing ? (
                 <div className="space-y-4">
                   <input
                     type="text"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full px-3 py-2 text-base font-serif font-bold border border-parchment-300 rounded-lg text-ink-950"
+                    className="w-full px-3 py-2 text-base font-serif font-bold border border-parchment-300 rounded-lg text-ink-950 focus:outline-hidden focus:ring-1 focus:ring-navy-600"
                   />
                   <textarea
                     rows={12}
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full p-4 text-xs font-mono border border-parchment-300 rounded-lg text-ink-900"
+                    className="w-full p-3 sm:p-4 text-xs font-mono border border-parchment-300 rounded-lg text-ink-900 focus:outline-hidden focus:ring-1 focus:ring-navy-600"
                   />
                   <div className="flex gap-2 justify-end">
                     <button
@@ -227,7 +260,7 @@ export const NotesView: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  <div className="prose prose-sm max-w-none text-xs leading-relaxed font-serif text-ink-900">
+                  <div className="prose prose-sm max-w-none text-xs leading-relaxed font-serif text-ink-900 break-words">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {selectedNote.content}
                     </ReactMarkdown>
@@ -242,16 +275,16 @@ export const NotesView: React.FC = () => {
                         {selectedNote.source_citations.map((cite, idx) => (
                           <div
                             key={idx}
-                            className="p-3 bg-parchment-50 border border-parchment-200 rounded-lg text-xs space-y-1"
+                            className="p-3 bg-parchment-50 border border-parchment-200 rounded-lg text-xs space-y-1 break-words"
                           >
                             <div className="flex items-center gap-2 font-mono font-semibold text-navy-950">
                               <span>[{cite.citation_id}]</span>
-                              <span>{cite.filename}</span>
+                              <span className="truncate">{cite.filename}</span>
                               <span className="text-ink-400">
                                 (Page {cite.page_numbers?.join(', ') || 1})
                               </span>
                             </div>
-                            <p className="text-ink-600 font-serif italic text-[11px]">
+                            <p className="text-ink-600 font-serif italic text-[11px] break-words">
                               "{cite.excerpt}"
                             </p>
                           </div>
