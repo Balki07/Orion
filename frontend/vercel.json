@@ -1,18 +1,19 @@
+
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "rewrites": [
     {
       "source": "/api/v1/:path*",
-      "destination": "https://orion-backend.onrender.com/api/v1/:path*"
+      "destination": "https://orion-nic6.onrender.com/api/v1/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://orion-backend.onrender.com/health"
+      "destination": "https://orion-nic6.onrender.com/health"
     },
     {
       "source": "/ready",
-      "destination": "https://orion-backend.onrender.com/ready"
+      "destination": "https://orion-nic6.onrender.com/ready"
     },
     {
       "source": "/(.*)",
@@ -65,4 +66,3 @@
     }
   ]
 }
-
