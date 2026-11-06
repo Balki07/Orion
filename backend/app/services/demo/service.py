@@ -96,7 +96,7 @@ async def check_and_reserve_rate_limit(
         select(func.count(LLMUsageRecord.id))
         .where(
             LLMUsageRecord.call_type == "public_demo",
-            LLMUsageRecord.session_id == visitor_session,
+            LLMUsageRecord.request_id == visitor_session,
             LLMUsageRecord.created_at >= cutoff,
         )
     )
@@ -115,7 +115,8 @@ async def check_and_reserve_rate_limit(
     # 3. Create committed tracking record visible to all workers
     rec = LLMUsageRecord(
         trace_id=trace_id,
-        session_id=visitor_session,
+        request_id=visitor_session,
+        session_id=None,
         user_id=None,
         call_type="public_demo",
         model="orion-demo",
@@ -172,7 +173,7 @@ async def get_visitor_daily_query_count(db: AsyncSession, visitor_session_id: st
         select(func.count(LLMUsageRecord.id))
         .where(
             LLMUsageRecord.call_type == "public_demo",
-            LLMUsageRecord.session_id == visitor_session_id,
+            LLMUsageRecord.request_id == visitor_session_id,
             LLMUsageRecord.status.notin_(["in_flight", "rate_limited", "visitor_quota_exceeded"]),
             LLMUsageRecord.created_at >= today_start,
         )

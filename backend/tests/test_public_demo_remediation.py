@@ -166,10 +166,10 @@ async def test_distributed_burst_rate_limiting(remediation_db):
 
     # Verify that in-flight records were persisted to LLMUsageRecord
     async with session_maker() as session:
-        session_id = get_visitor_session_id(visitor_ip)
+        visitor_session = get_visitor_session_id(visitor_ip)
         stmt = select(func.count(LLMUsageRecord.id)).where(
             LLMUsageRecord.call_type == "public_demo",
-            LLMUsageRecord.session_id == session_id,
+            LLMUsageRecord.request_id == visitor_session,
         )
         res = await session.execute(stmt)
         count = res.scalar()
