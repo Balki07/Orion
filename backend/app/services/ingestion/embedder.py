@@ -26,6 +26,14 @@ class LocalEmbedder:
 
     def _load_model(self) -> None:
         try:
+            import torch
+
+            torch.set_num_threads(1)
+            torch.set_num_interop_threads(1)
+        except Exception as te:
+            logger.debug(f"Could not configure PyTorch thread pool limits: {te}")
+
+        try:
             from sentence_transformers import SentenceTransformer
 
             logger.info(f"Loading local embedding model '{self.model_name}' on {self.device}...")
@@ -44,14 +52,24 @@ class LocalEmbedder:
             return []
 
         if self._model is not None:
-            # Generate embeddings in batches with normalization
-            embeddings = self._model.encode(
-                texts,
-                batch_size=self.batch_size,
-                show_progress_bar=False,
-                normalize_embeddings=True,
-            )
-            result = [emb.tolist() for emb in embeddings]
+            try:
+                import torch
+
+                inference_ctx = torch.inference_mode()
+            except Exception:
+                from contextlib import nullcontext
+
+                inference_ctx = nullcontext()
+
+            # Generate embeddings in batches with normalization under inference mode
+            with inference_ctx:
+                embeddings = self._model.encode(
+                    texts,
+                    batch_size=self.batch_size,
+                    show_progress_bar=False,
+                    normalize_embeddings=True,
+                )
+            result = embeddings.tolist() if hasattr(embeddings, "tolist") else [list(emb) for emb in embeddings]
         else:
             # Deterministic fallback hashing for testing without internet access
             result = []

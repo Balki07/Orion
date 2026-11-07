@@ -111,7 +111,7 @@ class Settings(BaseSettings):
     # Local Embedding Model
     EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     EMBEDDING_DIMENSIONS: int = 384
-    EMBEDDING_BATCH_SIZE: int = 32
+    EMBEDDING_BATCH_SIZE: int = 16
     EMBEDDING_DEVICE: str = "cpu"
 
     # Ingestion & Chunking

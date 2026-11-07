@@ -23,7 +23,7 @@ class IngestionPipeline:
             chunk_overlap=settings.CHUNK_OVERLAP,
         )
         self.embedder = get_embedder()
-        self._semaphore = asyncio.Semaphore(2)
+        self._semaphore = asyncio.Semaphore(1)
 
     async def process_document(self, document_id: str, db: AsyncSession) -> Document:
         """Executes full ingestion pipeline asynchronously:
@@ -53,6 +53,7 @@ class IngestionPipeline:
                 await db.commit()
 
                 extraction = self.extractor.extract_from_bytes(pdf_bytes, filename=doc.filename)
+                del pdf_bytes
                 doc.page_count = extraction.total_pages
                 doc.extraction_warnings = extraction.warnings
                 await db.commit()
@@ -62,6 +63,7 @@ class IngestionPipeline:
                 await db.commit()
 
                 text_chunks = self.chunker.chunk_pages(extraction.pages)
+                del extraction
                 if not text_chunks:
                     raise IngestionError(
                         "This PDF appears to contain scanned images or no extractable text. OCR is not currently supported. Please upload a text-based PDF.",
@@ -73,28 +75,36 @@ class IngestionPipeline:
                 doc.status = "embedding"
                 await db.commit()
 
-                texts_to_embed = [tc.text for tc in text_chunks]
-                embeddings = self.embedder.embed_texts(texts_to_embed)
-
-                # 5. State: indexing (Remove old chunks if retrying, then bulk insert)
+                # 5. State: indexing (Remove old chunks if retrying, then stream batch insert)
                 doc.status = "indexing"
                 await db.commit()
 
                 await db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
 
-                for tc, emb in zip(text_chunks, embeddings):
-                    chunk = Chunk(
-                        document_id=doc.id,
-                        chunk_index=tc.chunk_index,
-                        text=tc.text,
-                        page_numbers=tc.page_numbers,
-                        character_start=tc.character_start,
-                        character_end=tc.character_end,
-                        token_count=tc.token_count,
-                        embedding=emb,
-                        embedding_model=self.embedder.model_name,
-                    )
-                    db.add(chunk)
+                batch_size = 16
+                for batch_start in range(0, len(text_chunks), batch_size):
+                    batch_chunks = text_chunks[batch_start : batch_start + batch_size]
+                    batch_texts = [tc.text for tc in batch_chunks]
+                    batch_embeddings = self.embedder.embed_texts(batch_texts)
+
+                    for tc, emb in zip(batch_chunks, batch_embeddings):
+                        chunk = Chunk(
+                            document_id=doc.id,
+                            chunk_index=tc.chunk_index,
+                            text=tc.text,
+                            page_numbers=tc.page_numbers,
+                            character_start=tc.character_start,
+                            character_end=tc.character_end,
+                            token_count=tc.token_count,
+                            embedding=emb,
+                            embedding_model=self.embedder.model_name,
+                        )
+                        db.add(chunk)
+
+                    await db.flush()
+                    del batch_texts
+                    del batch_embeddings
+                    del batch_chunks
 
                 # 6. State: completed
                 doc.status = "completed"
@@ -125,6 +135,16 @@ class IngestionPipeline:
                 await db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
                 await db.commit()
                 raise
+            finally:
+                import gc
+
+                gc.collect()
+                try:
+                    import ctypes
+
+                    ctypes.CDLL("libc.so.6").malloc_trim(0)
+                except Exception:
+                    pass
 
 
 _PIPELINE_INSTANCE = None
