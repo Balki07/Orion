@@ -1,0 +1,5 @@
+# Optional requirements for running legacy PyTorch / Sentence-Transformers embedding comparison
+-r requirements.txt
+torch
+sentence-transformers>=3.0.0
+

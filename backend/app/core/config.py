@@ -108,11 +108,14 @@ class Settings(BaseSettings):
     GEMINI_MAX_TOTAL_RETRY_WAIT_SECONDS: float = 5.0
     GEMINI_FALLBACK_MODEL: str | None = None
 
-    # Local Embedding Model
+    # Local Embedding Model (FastEmbed ONNX Runtime by default; SentenceTransformers for comparison)
+    EMBEDDING_PROVIDER: str = "fastembed"  # "fastembed" | "sentence_transformers"
     EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     EMBEDDING_DIMENSIONS: int = 384
     EMBEDDING_BATCH_SIZE: int = 16
     EMBEDDING_DEVICE: str = "cpu"
+    ONNX_NUM_THREADS: int = 1
+    FASTEMBED_CACHE_DIR: str | None = None
 
     # Ingestion & Chunking
     CHUNK_SIZE: int = 500
